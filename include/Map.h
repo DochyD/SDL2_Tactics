@@ -1,13 +1,12 @@
 #pragma once
 
 #include "Game.h"
+#include "grid_cell.h"
 
 class Map
 {
 private:
-    int map[10][10];
-
-    const int cellWidth = 60;
+    GridCell map[33][33];
 
     SDL_Rect src, dest;
 
@@ -22,5 +21,5 @@ public:
 
     void loadMap();
     void drawMap();
-    void createMap();
+    void createMap(int windowHeight, int windowWidth);
 };

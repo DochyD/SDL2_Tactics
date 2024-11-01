@@ -147,7 +147,7 @@ void Game::render()
     SDL_RenderClear(renderer);
 
     // Render map
-    map->createMap();
+    map->createMap(windowHeight, windowWidth);
 
     SDL_RenderPresent(renderer);
 }

@@ -3,6 +3,7 @@
 // Project includes
 #include "Map.h"
 #include "TextureManager.h"
+#include "Game.h"
 
 // Third party
 // #include "json_utils.h"
@@ -32,17 +33,24 @@ void Map::drawMap()
     // Add map to the 'map' object.
 }
 
-void Map::createMap()
+void Map::createMap(int windowHeight, int windowWidth)
 {
     //SDL_SetRenderDrawColor(Game::renderer, 255, 0, 0, 255);
     //SDL_RenderClear(Game::renderer); // Clear the renderer with the draw color
 
+    // Created for  1400 * 1050
+
     SDL_Rect srcRect;
     SDL_Rect destRect;
+
+    int numberCellWidth = 15;
+    int numberCellHeight = 20;
 
     int scale = 1;
     int baseHeight = 45;
     int baseWidth= 90;
+
+
 
     srcRect.x = 0;
     srcRect.y = 0;
@@ -54,40 +62,83 @@ void Map::createMap()
     destRect.h = baseHeight * scale;
     destRect.w = baseWidth * scale;
 
+    int xOffset = (windowWidth - ((destRect.w - scale * 2) * numberCellWidth)) / 2;
+    int yOffset = (windowHeight - ((destRect.h - scale) * numberCellHeight)) / 2;
 
-    for(int i = 0; i < 14; i++){
+    std::cout << "---------" << std::endl;
+
+
+    int xGrid;
+    int yGrid;
+
+    // Draw the grid (Top side)
+    for (int line = numberCellWidth; line > 0; --line) {
+        int numberOfGridToDraw = ((numberCellWidth - line) * 2) + 1;
+        xGrid = numberCellWidth - line;
+        std::cout << "--" << std::endl;
         
-        destRect.x = (i * destRect.w) - (i * scale * 2);
-        TextureManager::DrawTexture(cellLight, srcRect, destRect);
+        
+        for (int grid = 0; grid < numberOfGridToDraw; ++grid) {
+            destRect.x = (line * (destRect.w - scale * 2)) + (grid * (destRect.w/2 - scale)) - destRect.w + scale * 2 + xOffset;        
+            destRect.y = ((destRect.h/2 - scale/2) * grid) + yOffset;
+
+            yGrid = grid + (14 - (numberOfGridToDraw / 2));
+            std::cout << xGrid << std::endl;
+            std::cout << yGrid << std::endl;
+            
+            // Add the cell to the IsometricGrad object
+            map[xGrid][yGrid].x = destRect.x;
+            map[xGrid][yGrid].y = destRect.y;
+            map[xGrid][yGrid].cellType = WALKABLE;
+
+            if (grid % 2 == 0) {
+                TextureManager::DrawTexture(cellLight, srcRect, destRect);
+            } else {
+                TextureManager::DrawTexture(cellDark, srcRect, destRect);
+            }
+        }
     }
 
-    for(int i = 0; i < 14; i++){
+    // Draw the grid bottom side.
+    for (int line = 1; line < numberCellHeight; ++line) {
+
+        int numberOfGridToDraw;
         
-        destRect.x = (i * destRect.w) - (i * scale * 2) + destRect.w / 2 - scale;        
-        destRect.y = destRect.h / 2 - scale / 2;
-        TextureManager::DrawTexture(cellDark, srcRect, destRect);
+        // Number of grid to draw isn't linear because we have a rectangle shape.
+        // We need to compensate because height > width
+        // Also the line starting from the corner was drawn by the loop above
+        // hence the two "-1" in the following lines 
+
+        if (line <= (numberCellHeight - numberCellWidth)){
+            numberOfGridToDraw = ((numberCellWidth - 1) * 2) + 1;
+        }
+        else{
+            numberOfGridToDraw = ((numberCellHeight - line - 1) * 2) + 1;
+        }
+
+
+        //xGrid = line + numberCellWidth - 1;
+        xGrid = line + numberCellWidth -1 -1 ;
+        std::cout << "--" << std::endl;
+        std::cout << xGrid << std::endl;
+        for (int grid = 0; grid < numberOfGridToDraw; ++grid) {
+            // Calculate isometric coordinates
+            destRect.x = ((destRect.w/2 - scale) * grid) + xOffset;
+            destRect.y = ((destRect.h - scale) * line) + ((destRect.h/2 - scale / 2) * grid) + yOffset;
+            
+            yGrid = line + grid;
+
+            map[xGrid][yGrid].x = destRect.x;
+            map[xGrid][yGrid].y = destRect.y;
+            map[xGrid][yGrid].cellType = WALKABLE;
+
+            // Alternate colors
+            if (grid % 2 == 0) {
+                TextureManager::DrawTexture(cellLight, srcRect, destRect);
+            } else {
+                TextureManager::DrawTexture(cellDark, srcRect, destRect);
+            }
+        }
     }
-
-    for(int i = 1; i < 20; i++){
-        
-        destRect.x = 0;        
-        destRect.y = (i) * destRect.h - scale;
-        TextureManager::DrawTexture(cellLight, srcRect, destRect);
-    }
-
-
-
-
-    // // 3rd row
-
-    // for(int i = 0; i <= 14; i++){
-        
-    //     destRect.x = (i * destRect.w) - (i * scale * 2);
-
-    //     destRect.y = (1) * destRect.h - scale;
-
-    //     TextureManager::DrawTexture(cellLight, srcRect, destRect);
-    // }
-
 
 }
