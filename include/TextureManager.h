@@ -5,15 +5,12 @@
 
 #include "Game.h"
 
-class TextureManager{
-    private:
-        //Empty
-    public:
-        // Constructor/Destructor
-        TextureManager();
-        ~TextureManager();
-        
-        static SDL_Texture* LoadTexture(const char* fileName);
-        static void DrawTexture(SDL_Texture* tex, SDL_Rect src, SDL_Rect dest);
+namespace TextureManager
+{
+
+    SDL_Texture* LoadTexture(const char *fileName);
+    void DestroyTexture(SDL_Texture* texture);
+
+    void DrawTexture(SDL_Texture *texture, SDL_Rect src, SDL_Rect dest);
 
 };

@@ -2,59 +2,68 @@
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
-#include <vector>
-
-
+// #include <vector>
 
 #include "Map.h"
 
 using json = nlohmann::json;
 
-namespace JsonUtils {
+namespace JsonUtils
+{
     // Convert CellType to string for better readability in JSON
 
     const std::string mapsFolder = "assets/maps/";
 
-    inline std::string cellTypeToString(CellType type) {
-        switch (type) {
-            case WALKABLE: return "WALKABLE";
-            case EMPTY: return "EMPTY";
-            case OBSTACLE: return "OBSTACLE";
-            case NO_RENDER: return "NO_RENDER";
-            default: return "WALKABLE";
+    inline std::string cellTypeToString(CellType type)
+    {
+        switch (type)
+        {
+        case WALKABLE:
+            return "WALKABLE";
+        case EMPTY:
+            return "EMPTY";
+        case OBSTACLE:
+            return "OBSTACLE";
+        case NO_RENDER:
+            return "NO_RENDER";
+        default:
+            return "WALKABLE";
         }
     }
 
     // Convert string back to CellType
-    inline CellType stringToCellType(const std::string& str) {
-        if (str == "EMPTY") return EMPTY;
-        if (str == "OBSTACLE") return OBSTACLE;
-        if (str == "NO_RENDER") return NO_RENDER;
+    inline CellType stringToCellType(const std::string &str)
+    {
+        if (str == "EMPTY")
+            return EMPTY;
+        if (str == "OBSTACLE")
+            return OBSTACLE;
+        if (str == "NO_RENDER")
+            return NO_RENDER;
         return WALKABLE;
     }
 
-    // Save grid to JSON file
-    inline bool saveGridToJson(const Map& isometricGrid, const std::string filename)
+    // Save grid to json
+    inline bool saveGridToJson(const Map &map, const std::string &filename)
     {
         const std::string fullPath = mapsFolder + filename;
-        std::cout <<  fullPath << std::endl;
+        std::clog << "Saving map to: " << fullPath << std::endl;
 
-        const std::vector<std::vector<GridCell>>& grid = isometricGrid.getGrid();
-
-        try {
+        try
+        {
             json j;
-            j["rows"] = isometricGrid.getWidth();
-            j["cols"] = isometricGrid.getHeight();
-            j["cellWidth"] = isometricGrid.getCellWidth();
-            j["cellHeight"] = isometricGrid.getCellHeight();
-            j["viewportwidth"] = isometricGrid.getViewportWidth();
-            j["viewportHeight"] = isometricGrid.getViewportHeight();
-            
+            // Get the grid size from Map class
+            const int mapSize = map.getSize();
+            j["size"] = mapSize;
+
             // Store cells
             json cells = json::array();
-            for (const auto& row : grid) {
+            for (int row = 0; row < mapSize; row++)
+            {
                 json jsonRow = json::array();
-                for (const auto& cell : row) {
+                for (int col = 0; col < mapSize; col++)
+                {
+                    const Cell &cell = map.getCell(row, col);
                     json cellJson;
                     cellJson["x"] = cell.x;
                     cellJson["y"] = cell.y;
@@ -68,59 +77,66 @@ namespace JsonUtils {
 
             // Write to file
             std::ofstream file(fullPath);
-            if (!file.is_open()) {
+            if (!file.is_open())
+            {
+                std::cerr << "Failed to open file for writing: " << fullPath << std::endl;
                 return false;
             }
             file << j.dump(4); // Pretty print with indent of 4
             return true;
         }
-        catch (const std::exception& e) {
+        catch (const std::exception &e)
+        {
+            std::cerr << "Error saving grid to JSON: " << e.what() << std::endl;
             return false;
         }
     }
 
     // Load grid from JSON file
-    inline bool loadGridFromJson(IsometricGrid& isometricGrid, const std::string filename)
+    inline bool loadGridFromJson(Map &map, const std::string filename)
     {
         const std::string filePath = mapsFolder + filename;
-        try {
+        try
+        {
             std::ifstream file(filePath);
-            if (!file.is_open()) {
+            if (!file.is_open())
+            {
                 return false;
             }
 
             json j;
             file >> j;
 
-            int rows = j["rows"];
-            int cols = j["cols"];
-            
-            isometricGrid.setCellWidth(j["cellWidth"]);
-            isometricGrid.setCellHeight(j["cellHeight"]);
-            isometricGrid.setViewportWidth(j["viewportwidth"]);
-            isometricGrid.setViewportHeight(j["viewportHeight"]);
+            // int rows = j["rows"];
+            // int cols = j["cols"];
 
+            // map.setCellWidth(j["cellWidth"]);
+            // map.setCellHeight(j["cellHeight"]);
+            // map.setViewportWidth(j["viewportwidth"]);
+            // map.setViewportHeight(j["viewportHeight"]);
 
-            std::vector<std::vector<GridCell>>& grid = isometricGrid.getGrid();
+            const auto &cells = j["cells"];
 
-            const auto& cells = j["cells"];
-            for (int i = 0; i < rows; ++i) {
-                for (int j = 0; j < cols; ++j) {
-                    const auto& cellJson = cells[i][j];
+            const int &mapSize = map.getSize();
+            for (int row = 0; row < mapSize; row++)
+            {
+                for (int col = 0; col < mapSize; col++)
+                {
+                    const auto &cellJson = cells[row][col];
 
-                    GridCell cell(
+                    Cell cell(
                         cellJson["x"],
                         cellJson["y"],
                         stringToCellType(cellJson["type"]),
-                        cellJson["occupied"]
-                    );
- 
-                    isometricGrid.setGridCell(i,j, cell);
+                        cellJson["occupied"]);
+
+                    map.setCell(row, col, cell);
                 }
             }
             return true;
         }
-        catch (const std::exception& e) {
+        catch (const std::exception &e)
+        {
             return false;
         }
     }

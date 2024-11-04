@@ -7,14 +7,10 @@
 #include "TextureManager.h"
 #include "Map.h"
 
-
 // Initialize static member to nullptr (SDL not initialized yet)
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
-
-// Test area
-Map *map;
-
+Map *Game::map = nullptr;
 
 // Constructor
 Game::Game(const char *title, const int width, const int height)
@@ -51,7 +47,7 @@ Game::Game(const char *title, const int width, const int height)
     }
 
     // To handle window resize automatically
-    //SDL_RenderSetLogicalSize(renderer, width, height);
+    // SDL_RenderSetLogicalSize(renderer, width, height);
 
     isRunning = true;
     windowWidth = width;
@@ -59,8 +55,9 @@ Game::Game(const char *title, const int width, const int height)
     windowResized = false;
 
     // test zone
-
     map = new Map();
+
+    map->loadMap("base_map.json");
 }
 
 // Destructor
@@ -79,25 +76,28 @@ Game::~Game()
     SDL_Quit();
 }
 
-void Game::handleResize(SDL_Event& event)
+void Game::handleResize(SDL_Event &event)
 {
     int width = event.window.data1;
     int height = event.window.data2;
-    
+
     // Update viewport to maintain aspect ratio
     float aspectRatio = 1280.0f / 720.0f;
     int newWidth = width;
     int newHeight = height;
-    
-    if (width / aspectRatio > height) {
+
+    if (width / aspectRatio > height)
+    {
         newWidth = static_cast<int>(height * aspectRatio);
-    } else {
+    }
+    else
+    {
         newHeight = static_cast<int>(width / aspectRatio);
     }
-    
+
     int vpX = (width - newWidth) / 2;
     int vpY = (height - newHeight) / 2;
-    
+
     SDL_Rect viewport = {vpX, vpY, newWidth, newHeight};
     SDL_RenderSetViewport(renderer, &viewport);
 }
@@ -106,31 +106,27 @@ void Game::handleResize(SDL_Event& event)
 void Game::processEvents()
 {
     // uncomment if feels slow when moving mouse.
-    SDL_EventState(SDL_MOUSEMOTION,SDL_IGNORE);
-
+    SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
     SDL_PollEvent(&event);
     switch (event.type)
     {
+    
+    // Handle quitting of the game.
     case SDL_QUIT:
+        std::clog << "Event : Quit game." << std::endl;
         isRunning = false;
         return;
+    // Handle window resize (TODO)
     case SDL_WINDOWEVENT:
         if (event.window.event == SDL_WINDOWEVENT_RESIZED)
         {
-            //std::cout << "resize" << std::endl;
-            // Handle window resize event if needed
+            std::clog << "Event : Window resized." << std::endl;
             windowWidth = event.window.data1;
             windowHeight = event.window.data2;
-            
-            //handleResize(event);
         }
+    
 
-
-        // Option 1: If you have access to the player entity
-        // if(player.hasComponent<KeyboardController>()) {
-        //     player.getComponent<KeyboardController>().handleEvent(event);
-        // }
     }
 }
 
@@ -147,7 +143,8 @@ void Game::render()
     SDL_RenderClear(renderer);
 
     // Render map
-    map->createMap(windowHeight, windowWidth);
+    // map->createBaseMap(windowHeight, windowWidth); // don't forget to comment out the map loading
+    map->drawMap();
 
     SDL_RenderPresent(renderer);
 }

@@ -7,7 +7,7 @@ enum CellType {
   NO_RENDER
 }; 
 
-struct GridCell {
+struct Cell {
     // Cell coordinates on screen for the base viewport
     // represents the to point of the cell
     float x; 
@@ -15,13 +15,13 @@ struct GridCell {
     CellType cellType;
     bool occupied = false;
     
-    GridCell(){
+    Cell(){
       this->x = 0;
       this->y = 0;
       this->occupied = false;
       this->cellType = NO_RENDER;
     }
-    GridCell(float x, float y, CellType celltype, bool occupied){
+    Cell(float x, float y, CellType celltype, bool occupied){
       this->x = x;
       this->y = y;
       this->occupied = occupied;
