@@ -6601,5 +6601,7 @@
             }
         ]
     ],
-    "size": 33
+    "playerBaseHealth": 40,
+    "playerStartingPosX": 14,
+    "playerStartingPosY": 14
 }

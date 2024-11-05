@@ -4,19 +4,23 @@
 #include <SDL2/SDL_image.h>
 
 class Map;
+class Character;
 
 class Game
 {
 private:
+    // Window
     SDL_Window *window;
-
-    static Map *map;
-
     int windowHeight;
     int windowWidth;
-    bool windowResized;
-
     bool isRunning;
+
+    // Map
+    static Map *map;
+    
+    // Characters
+    static Character *player;
+
 
 public:
     // Static variables

@@ -10,71 +10,57 @@
 class Map
 {
 private:
+    // Grid
     static const int gridDimension = 33;
     Cell grid[gridDimension][gridDimension];
 
-    SDL_Rect src, dest;
 
-    SDL_Texture *cellLight;
-    SDL_Texture *cellDark;
-    SDL_Texture *cellObstacle;
-
+    // Textures
+    // > base texture
     std::tuple<int, int> cellTextureDimension{45, 90};
+    SDL_Texture *cellLight = nullptr;
+    SDL_Texture *cellDark = nullptr;
+    
+    // obstacle texture, not used yet
+    std::tuple<int, int> obsTextureDimension{45, 90};
+    SDL_Texture *cellObstacle = nullptr;
+
+    // Player info
+    int playerBaseHealth;
+    int playerStartingPosX;
+    int playerStartingPosY;
+
+    
 
 public:
     // Constructor/Destructor
     Map();
     ~Map();
 
-    // Safe getter for the grid
-    const Cell &getCell(int row, int col) const
-    {
-        if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension)
-        {
-            return grid[row][col];
-        }
-        static const Cell invalidCell;
-        return invalidCell;
-    }
-
-    // Safe setter for the grid
-    void setCell(int row, int col, const Cell &cell)
-    {
-        if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension)
-        {
-            grid[row][col] = cell;
-        }
-    }
-
-    // Safe setter for individual cell properties
-    void setCellPosition(int row, int col, float x, float y)
-    {
-        if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension)
-        {
-            grid[row][col].x = x;
-            grid[row][col].y = y;
-        }
-    }
-
-    void setCellType(int row, int col, CellType type)
-    {
-        if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension)
-        {
-            grid[row][col].cellType = type;
-        }
-    }
-
-    void setCellOccupied(int row, int col, bool occupied)
-    {
-        if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension)
-        {
-            grid[row][col].occupied = occupied;
-        }
-    }
+    
+    // Getters 
+    const Cell& getCell(int row, int col) const; // Safe getter for the grid
 
     int getSize() const { return gridDimension; }
+    int getPlayerStartingPosX() const { return playerStartingPosX; }
+    int getPlayerStartingPosY() const { return playerStartingPosY; }
+    int getPlayerBaseHealth() const { return playerBaseHealth; }
 
+    
+    // Safe setter for the grid
+    void setCell(int row, int col, const Cell& cell);
+    void setCellPosition(int row, int col, float x, float y);
+    void setCellType(int row, int col, CellType type);
+    void setCellOccupied(int row, int col, bool occupied);
+
+    void setPlayerStartingPosX(int x) { playerStartingPosX = x; }
+    void setPlayerStartingPosY(int y) { playerStartingPosY = y; }
+    void setPlayerBaseHealth(int h) { playerBaseHealth = h; }
+    
+    // Methods
     void loadMap(char* filePath);
     void drawMap();
     void createBaseMap(int windowHeight, int windowWidth);
+
+    void findCellPressed(int x, int y);
 };

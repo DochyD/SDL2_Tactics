@@ -52,11 +52,14 @@ namespace JsonUtils
         try
         {
             json j;
-            // Get the grid size from Map class
+            // Store parameters into json file
             const int mapSize = map.getSize();
-            j["size"] = mapSize;
+            //j["size"] = map.getSize();
+            j["playerStartingPosX"] = map.getPlayerStartingPosX();
+            j["playerStartingPosY"] = map.getPlayerStartingPosY();
+            j["playerBaseHealth"] = map.getPlayerBaseHealth();
 
-            // Store cells
+            // Store cells into json
             json cells = json::array();
             for (int row = 0; row < mapSize; row++)
             {
@@ -107,13 +110,9 @@ namespace JsonUtils
             json j;
             file >> j;
 
-            // int rows = j["rows"];
-            // int cols = j["cols"];
-
-            // map.setCellWidth(j["cellWidth"]);
-            // map.setCellHeight(j["cellHeight"]);
-            // map.setViewportWidth(j["viewportwidth"]);
-            // map.setViewportHeight(j["viewportHeight"]);
+            map.setPlayerStartingPosX(j["playerStartingPosX"]);
+            map.setPlayerStartingPosY(j["playerStartingPosY"]);
+            map.setPlayerBaseHealth(j["playerBaseHealth"]);
 
             const auto &cells = j["cells"];
 

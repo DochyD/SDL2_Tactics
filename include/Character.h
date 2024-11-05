@@ -1,25 +1,36 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <tuple>
 
-
-class Character 
+class Character
 {
-    private:
-        int healtPoint;
+private:
+    int healtPoint;
 
-        int xPos, yPos;
-        int xScreen, yScreen;
+    int xPos, yPos;
+    int xScreen, yScreen;
 
-        SDL_Texture *charTexture;
+    SDL_Texture *charTexture;
+    std::tuple<int, int> charTextureDimension{45, 90};
 
-    public:
-        // Constructor / Destructor
-        Character(int x, int y, const char* texPath);
-        ~Character();
+public:
+    // Constructor / Destructor
+    Character(int hp, int x, int y, SDL_Texture *charTexture);
+    ~Character();
 
-        // Getters
-        int getHealthPoint() { return healtPoint; }
+    // Getters
+    int getHealthPoint() { return healtPoint; }
+    SDL_Texture *getCharTexture() { return charTexture; }
+    std::tuple<int, int> &getCharTextureDimension() { return charTextureDimension; }
 
-        // Setters
-        void setHealthPoint(int hp) { healtPoint = hp; }
+    int getPosX() { return xPos; }
+    int getPosY() { return yPos; }
+    int getScreenX() { return xScreen; }
+    int getScreenY() { return yScreen; }
+
+    // Setters
+    void setHealthPoint(int hp) { healtPoint = hp; }
+
+    virtual void draw() = 0;
+    virtual void update() = 0;
 };

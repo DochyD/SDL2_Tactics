@@ -6,11 +6,14 @@
 #include "Game.h"
 #include "TextureManager.h"
 #include "Map.h"
+#include "Player.h"
 
 // Initialize static member to nullptr (SDL not initialized yet)
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
+
 Map *Game::map = nullptr;
+Character *Game::player = nullptr;
 
 // Constructor
 Game::Game(const char *title, const int width, const int height)
@@ -52,17 +55,31 @@ Game::Game(const char *title, const int width, const int height)
     isRunning = true;
     windowWidth = width;
     windowHeight = height;
-    windowResized = false;
 
     // test zone
     map = new Map();
-
     map->loadMap("base_map.json");
+
+    TextureManager::LoadCharacterTexture("assets/sprites/player.png");
+    TextureManager::LoadEnemyTexture("assets/sprites/enemy.png");
+
+    player = new Player(
+        map->getPlayerBaseHealth(),
+        map->getPlayerStartingPosX(),
+        map->getPlayerStartingPosY(),
+        TextureManager::playerTexture);
+
+    std::cout << TextureManager::playerTexture << std::endl;
 }
 
 // Destructor
 Game::~Game()
 {
+
+    TextureManager::DestroyTextures();
+    delete map;
+    delete player;
+
     if (renderer)
     {
         SDL_DestroyRenderer(renderer);
@@ -108,25 +125,63 @@ void Game::processEvents()
     // uncomment if feels slow when moving mouse.
     SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
-    SDL_PollEvent(&event);
-    switch (event.type)
-    {
-    
-    // Handle quitting of the game.
-    case SDL_QUIT:
-        std::clog << "Event : Quit game." << std::endl;
-        isRunning = false;
-        return;
-    // Handle window resize (TODO)
-    case SDL_WINDOWEVENT:
-        if (event.window.event == SDL_WINDOWEVENT_RESIZED)
-        {
-            std::clog << "Event : Window resized." << std::endl;
-            windowWidth = event.window.data1;
-            windowHeight = event.window.data2;
-        }
-    
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+            case SDL_QUIT:
+                std::clog << "Event : Quit game." << std::endl;
+                isRunning = false;
+                return;
 
+            case SDL_WINDOWEVENT:
+                if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+                    std::clog << "Event : Window resized." << std::endl;
+                    windowWidth = event.window.data1;
+                    windowHeight = event.window.data2;
+                }
+                break;
+
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.sym) {
+                    case SDLK_1:
+                        std::cout << "Key 1 pressed." << std::endl;
+                        break;
+                    case SDLK_2:
+                        std::cout << "Key 2 pressed." << std::endl;
+                        break;
+                    case SDLK_3:
+                        std::cout << "Key 3 pressed." << std::endl;
+                        break;
+                    case SDLK_4:
+                        std::cout << "Key 4 pressed." << std::endl;
+                        break;
+                    case SDLK_ESCAPE:
+                        std::cout << "Escape key pressed." << std::endl;
+                        break;
+                    default:
+                        std::cout << "Invalid key pressed." << std::endl;
+                        break;
+                }
+                break;
+
+            case SDL_MOUSEBUTTONDOWN:
+                switch (event.button.button) {
+                    case SDL_BUTTON_LEFT: {
+                        int x = event.button.x;
+                        int y = event.button.y;
+                        std::cout << "Left mouse button pressed at (" << x << ", " << y << ")" << std::endl;
+
+                        
+                        break;
+                    }
+                    default:
+                        std::cout << "Invalid mouse button pressed." << std::endl;
+                        break;
+                }
+                break;
+
+            default:
+                break;
+        }
     }
 }
 
@@ -145,6 +200,9 @@ void Game::render()
     // Render map
     // map->createBaseMap(windowHeight, windowWidth); // don't forget to comment out the map loading
     map->drawMap();
+
+    // Render player
+    player->draw();
 
     SDL_RenderPresent(renderer);
 }

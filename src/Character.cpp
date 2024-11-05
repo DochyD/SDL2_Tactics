@@ -1,17 +1,20 @@
 #include "Character.h"
 #include "TextureManager.h"
 
-Character::Character(int x, int y, const char *texPath)
+Character::Character(int hp, int x, int y, SDL_Texture *cTexture)
 {
-    healtPoint = 40;
+    healtPoint = hp;
 
     xPos = x;
     yPos = y;
 
-    charTexture = TextureManager::LoadTexture(texPath);
+    xScreen = 0;
+    yScreen = 0;
+
+    charTexture = cTexture;
 }
 
 Character::~Character()
 {
-    TextureManager::DestroyTexture(charTexture);
+    
 }

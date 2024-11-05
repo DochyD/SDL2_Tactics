@@ -12,15 +12,51 @@ Map::Map()
 {
     cellLight = TextureManager::LoadTexture("assets/sprites/lightCell.png");
     cellDark = TextureManager::LoadTexture("assets/sprites/darkCell.png");
-    cellObstacle = TextureManager::LoadTexture("assets/sprites/player.png");
+    // cellObstacle = TextureManager::LoadTexture("assets/sprites/player.png");
 }
 Map::~Map()
 {
     TextureManager::DestroyTexture(cellLight);
     TextureManager::DestroyTexture(cellDark);
-    TextureManager::DestroyTexture(cellObstacle);
+    // TextureManager::DestroyTexture(cellObstacle);
 }
 
+
+const Cell& Map::getCell(int row, int col) const {
+    if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension) {
+        return grid[row][col];
+    }
+    static const Cell invalidCell;
+    return invalidCell;
+}
+
+void Map::setCell(int row, int col, const Cell& cell) {
+    if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension) {
+        grid[row][col] = cell;
+    }
+}
+
+void Map::setCellPosition(int row, int col, float x, float y) {
+    if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension) {
+        grid[row][col].x = x;
+        grid[row][col].y = y;
+    }
+}
+
+void Map::setCellType(int row, int col, CellType type) {
+    if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension) {
+        grid[row][col].cellType = type;
+    }
+}
+
+void Map::setCellOccupied(int row, int col, bool occupied) {
+    if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension) {
+        grid[row][col].occupied = occupied;
+    }
+}
+
+
+// Load map from json
 void Map::loadMap(char *filePath)
 {
     if (JsonUtils::loadGridFromJson(*this, filePath))
@@ -33,6 +69,7 @@ void Map::loadMap(char *filePath)
     }
 }
 
+// Draw the map based on info from the map object
 void Map::drawMap()
 {
     SDL_Rect srcRect, destRect;
@@ -76,11 +113,15 @@ void Map::drawMap()
     }
 }
 
+// Create the base map and saves it to "base_map.json"
 void Map::createBaseMap(int windowHeight, int windowWidth)
 {
-    // Created for window size 1400 * 1050
+    // This function is used as a map editor and creates the base map
+    // ~ Not fancy but can be used as a base to create other maps.
+    // Grid created for window size of 1400 * 1050
 
-    // reset grid just in case
+    // Reset the grid object in Map class in case we create the map
+    // but forgot to remove the map loading.
     Cell baseCell;
 
     for (int i = 0; i < gridDimension; ++i)
@@ -91,6 +132,7 @@ void Map::createBaseMap(int windowHeight, int windowWidth)
         }
     }
 
+    // Variables used to create the grid
     SDL_Rect srcRect;
     SDL_Rect destRect;
 
@@ -190,9 +232,22 @@ void Map::createBaseMap(int windowHeight, int windowWidth)
         }
     }
 
+    // Stuff that is not related to drawing the grid
+    this->setPlayerStartingPosX(14);
+    this->setPlayerStartingPosY(14);
+    this->setPlayerBaseHealth(40);
+
+
     // To save the grid:
     if (JsonUtils::saveGridToJson(*this, "base_map.json"))
     {
         std::clog << "Grid saved successfully!" << std::endl;
     }
+}
+
+// Find which cell wat clicked on given two coordinates.
+
+void Map::findCellPressed(int x, int y)
+{
+    
 }
