@@ -11,8 +11,7 @@ class Game
 private:
     // Window
     SDL_Window *window;
-    int windowHeight;
-    int windowWidth;
+
     bool isRunning;
 
     // Map
@@ -26,6 +25,9 @@ public:
     // Static variables
     static SDL_Renderer *renderer;
     static SDL_Event event;
+
+    static int windowHeight;
+    static int windowWidth;
 
     // Constructor/Destructor
     Game(const char *title, const int width, const int height);

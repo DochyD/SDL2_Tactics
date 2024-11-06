@@ -1,9 +1,9 @@
 #include <iostream>
+#include <utility>
 
 // Project includes
 #include "Map.h"
 #include "TextureManager.h"
-// #include "Game.h"
 
 // Third party
 #include "json_utils.h"
@@ -21,40 +21,48 @@ Map::~Map()
     // TextureManager::DestroyTexture(cellObstacle);
 }
 
-
-const Cell& Map::getCell(int row, int col) const {
-    if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension) {
+const Cell &Map::getCell(int row, int col) const
+{
+    if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension)
+    {
         return grid[row][col];
     }
     static const Cell invalidCell;
     return invalidCell;
 }
 
-void Map::setCell(int row, int col, const Cell& cell) {
-    if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension) {
+void Map::setCell(int row, int col, const Cell &cell)
+{
+    if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension)
+    {
         grid[row][col] = cell;
     }
 }
 
-void Map::setCellPosition(int row, int col, float x, float y) {
-    if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension) {
+void Map::setCellPosition(int row, int col, float x, float y)
+{
+    if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension)
+    {
         grid[row][col].x = x;
         grid[row][col].y = y;
     }
 }
 
-void Map::setCellType(int row, int col, CellType type) {
-    if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension) {
+void Map::setCellType(int row, int col, CellType type)
+{
+    if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension)
+    {
         grid[row][col].cellType = type;
     }
 }
 
-void Map::setCellOccupied(int row, int col, bool occupied) {
-    if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension) {
+void Map::setCellOccupied(int row, int col, bool occupied)
+{
+    if (row >= 0 && row < gridDimension && col >= 0 && col < gridDimension)
+    {
         grid[row][col].occupied = occupied;
     }
 }
-
 
 // Load map from json
 void Map::loadMap(char *filePath)
@@ -78,13 +86,13 @@ void Map::drawMap()
     // ideally this info would be queried from the map object (and stored in the map json)
     srcRect.x = 0;
     srcRect.y = 0;
-    srcRect.h = std::get<0>(cellTextureDimension);
-    srcRect.w = std::get<1>(cellTextureDimension);
+    srcRect.h = cellTextureDimension.first;
+    srcRect.w = cellTextureDimension.second;
 
     // TODO
     // resizing isn't being took care of here (based on the window's size)
-    destRect.h = std::get<0>(cellTextureDimension);
-    destRect.w = std::get<1>(cellTextureDimension);
+    destRect.h = cellTextureDimension.first;
+    destRect.w = cellTextureDimension.second;
 
     for (int row = 0; row < gridDimension; row++)
     {
@@ -145,13 +153,13 @@ void Map::createBaseMap(int windowHeight, int windowWidth)
 
     srcRect.x = 0;
     srcRect.y = 0;
-    srcRect.h = baseHeight;
-    srcRect.w = baseWidth;
+    srcRect.h = cellTextureDimension.first;
+    srcRect.w = cellTextureDimension.second;
 
     destRect.x = 0;
     destRect.y = 0;
-    destRect.h = baseHeight * scale;
-    destRect.w = baseWidth * scale;
+    destRect.h = cellTextureDimension.first * scale;
+    destRect.w = cellTextureDimension.second * scale;
 
     int xOffset = (windowWidth - ((destRect.w - scale * 2) * numberCellWidth)) / 2;
     int yOffset = (windowHeight - ((destRect.h - scale) * numberCellHeight)) / 2;
@@ -237,7 +245,6 @@ void Map::createBaseMap(int windowHeight, int windowWidth)
     this->setPlayerStartingPosY(14);
     this->setPlayerBaseHealth(40);
 
-
     // To save the grid:
     if (JsonUtils::saveGridToJson(*this, "base_map.json"))
     {
@@ -247,7 +254,48 @@ void Map::createBaseMap(int windowHeight, int windowWidth)
 
 // Find which cell wat clicked on given two coordinates.
 
-void Map::findCellPressed(int x, int y)
+void Map::findClickedCell(int x, int y)
 {
-    
+
+    int xOffset = (Game::windowWidth - ((cellTextureDimension.second * scale - scale * 2) * numberCellWidth)) / 2;
+    int yOffset = (Game::windowHeight - ((cellTextureDimension.first * scale - scale) * numberCellHeight)) / 2;
+
+    // CHeck if x and y are in bound
+    if (x > xOffset && x < (Game::windowWidth - xOffset) && y > yOffset && y < Game::windowHeight - yOffset)
+    {
+        // find the cell where x is valid
+
+        int i, j = getSize() / 2;
+        int xCell = getCell(i, j).x;
+        int yCell = getCell(i, j).y;
+
+        // Determine the direction to move: +1 if y < yCell, -1 if y > yCell
+        int direction = (x < xCell) ? 1 : -1;
+        
+        while ((direction == 1 && x <= xCell) || (direction == -1 && x >= xCell))
+        {
+            i -= direction;
+            j += direction;
+            xCell = getCell(i, j).x;
+        }
+
+        // Determine the direction to move: +1 if y < yCell, -1 if y > yCell
+        direction = (y < yCell) ? 1 : -1;
+        while ((direction == 1 && y <= yCell) || (direction == -1 && y >= yCell))
+        {
+            i += direction;
+            j += direction;
+            yCell = getCell(i, j).y;
+        }
+
+        std::cout << "i : " << i << std::endl;
+        std::cout << "j : " << j << std::endl;
+
+        
+    }
+
+    // Find x ( 3 max ) multiple)
+    // 2 pointers problem
+
+    // find y
 }

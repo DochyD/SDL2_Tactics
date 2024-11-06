@@ -54,10 +54,12 @@ namespace JsonUtils
             json j;
             // Store parameters into json file
             const int mapSize = map.getSize();
-            //j["size"] = map.getSize();
+            // j["size"] = map.getSize();
             j["playerStartingPosX"] = map.getPlayerStartingPosX();
             j["playerStartingPosY"] = map.getPlayerStartingPosY();
             j["playerBaseHealth"] = map.getPlayerBaseHealth();
+            j["windowHeight"] = map.getPlayerBaseHealth();
+            j["windowWidth"] = map.getPlayerBaseHealth();
 
             // Store cells into json
             json cells = json::array();
@@ -123,13 +125,16 @@ namespace JsonUtils
                 {
                     const auto &cellJson = cells[row][col];
 
-                    Cell cell(
-                        cellJson["x"],
-                        cellJson["y"],
-                        stringToCellType(cellJson["type"]),
-                        cellJson["occupied"]);
+                    if (cellJson["type"] != "NO_RENDER")
+                    {
+                        Cell cell(
+                            cellJson["x"],
+                            cellJson["y"],
+                            stringToCellType(cellJson["type"]),
+                            cellJson["occupied"]);
 
-                    map.setCell(row, col, cell);
+                        map.setCell(row, col, cell);
+                    }
                 }
             }
             return true;

@@ -1,6 +1,5 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <tuple>
 
 class Character
 {
@@ -11,7 +10,7 @@ private:
     int xScreen, yScreen;
 
     SDL_Texture *charTexture;
-    std::tuple<int, int> charTextureDimension{45, 90};
+    std::pair<int, int> charTextureDimension{45, 90};
 
 public:
     // Constructor / Destructor
@@ -21,7 +20,7 @@ public:
     // Getters
     int getHealthPoint() { return healtPoint; }
     SDL_Texture *getCharTexture() { return charTexture; }
-    std::tuple<int, int> &getCharTextureDimension() { return charTextureDimension; }
+    std::pair<int, int> &getCharTextureDimension() { return charTextureDimension; }
 
     int getPosX() { return xPos; }
     int getPosY() { return yPos; }

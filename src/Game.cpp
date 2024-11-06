@@ -12,6 +12,10 @@
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
 
+int Game::windowWidth;
+int Game::windowHeight;
+
+// init those object to null because SDL is not initilized yet
 Map *Game::map = nullptr;
 Character *Game::player = nullptr;
 
@@ -169,7 +173,7 @@ void Game::processEvents()
                         int x = event.button.x;
                         int y = event.button.y;
                         std::cout << "Left mouse button pressed at (" << x << ", " << y << ")" << std::endl;
-
+                        map->findClickedCell(x, y);
                         
                         break;
                     }

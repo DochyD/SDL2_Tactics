@@ -1,4 +1,3 @@
-#include <tuple>
 #include <iostream>
 
 #include "Player.h"
@@ -22,15 +21,15 @@ void Player::draw()
 
     srcRect.x = 0;
     srcRect.y = 0;
-    srcRect.h = std::get<0>(getCharTextureDimension());
-    srcRect.w = std::get<1>(getCharTextureDimension());
+    srcRect.h = getCharTextureDimension().first;
+    srcRect.w = getCharTextureDimension().second;
 
     // TODO
     // resizing isn't being took care of here (based on the window's size)
     destRect.x = getScreenX();
     destRect.y = getScreenY();
-    destRect.h = std::get<0>(getCharTextureDimension());
-    destRect.w = std::get<1>(getCharTextureDimension());
+    destRect.h = getCharTextureDimension().first;
+    destRect.w = getCharTextureDimension().second;
 
     TextureManager::DrawTexture(getCharTexture(), srcRect, destRect);
 }

@@ -1,8 +1,6 @@
 #pragma once
 
-// #include <SDL2/SDL.h>
-// #include <SDL2/SDL_image.h>
-#include <tuple>
+#include <utility> // used for std::pait
 
 #include "Game.h"
 #include "cell.h"
@@ -14,15 +12,20 @@ private:
     static const int gridDimension = 33;
     Cell grid[gridDimension][gridDimension];
 
+    int numberCellWidth = 15;
+    int numberCellHeight = 19;
+
+    int scale = 1;
+
 
     // Textures
     // > base texture
-    std::tuple<int, int> cellTextureDimension{45, 90};
+    std::pair<int, int> cellTextureDimension{45, 90};
     SDL_Texture *cellLight = nullptr;
     SDL_Texture *cellDark = nullptr;
     
     // obstacle texture, not used yet
-    std::tuple<int, int> obsTextureDimension{45, 90};
+    std::pair<int, int> obsTextureDimension{45, 90};
     SDL_Texture *cellObstacle = nullptr;
 
     // Player info
@@ -45,6 +48,8 @@ public:
     int getPlayerStartingPosX() const { return playerStartingPosX; }
     int getPlayerStartingPosY() const { return playerStartingPosY; }
     int getPlayerBaseHealth() const { return playerBaseHealth; }
+    int getNumberCellWidth() const { return numberCellWidth; }
+    int getNumberCellHeight() const { return numberCellHeight; }
 
     
     // Safe setter for the grid
@@ -62,5 +67,5 @@ public:
     void drawMap();
     void createBaseMap(int windowHeight, int windowWidth);
 
-    void findCellPressed(int x, int y);
+    void findClickedCell(int x, int y);
 };
