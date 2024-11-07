@@ -1,15 +1,15 @@
 #include "Character.h"
 #include "TextureManager.h"
 
-Character::Character(int hp, int x, int y, SDL_Texture *cTexture)
+Character::Character(int hp, int x, int y, int screenX, int screenY, SDL_Texture *cTexture)
 {
     healtPoint = hp;
 
     xPos = x;
     yPos = y;
 
-    xScreen = 0;
-    yScreen = 0;
+    xScreen = screenX;
+    yScreen = screenY;
 
     charTexture = cTexture;
 }

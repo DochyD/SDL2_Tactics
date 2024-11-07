@@ -14,7 +14,7 @@ private:
 
 public:
     // Constructor / Destructor
-    Character(int hp, int x, int y, SDL_Texture *charTexture);
+    Character(int hp, int x, int y, int screenX, int screenY, SDL_Texture *charTexture);
     ~Character();
 
     // Getters
@@ -29,6 +29,8 @@ public:
 
     // Setters
     void setHealthPoint(int hp) { healtPoint = hp; }
+    void setPos(int x, int y) { xPos = x; yPos = y; }
+    void setScreenPos(int x, int y) { xScreen = x; yScreen = y; }
 
     virtual void draw() = 0;
     virtual void update() = 0;

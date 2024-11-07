@@ -4,7 +4,7 @@
 #include "TextureManager.h"
 
 
-Player::Player(int hp, int x, int y, SDL_Texture *cTexture) : Character(hp, x, y, cTexture)
+Player::Player(int hp, int x, int y, int sX, int sY, SDL_Texture *cTexture) : Character(hp, x, y, sX, sY, cTexture)
 {
     // Add stuff related to spells I guess ~
 

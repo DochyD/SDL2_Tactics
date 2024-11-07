@@ -1,6 +1,6 @@
 #pragma once
 
-#include <utility> // used for std::pait
+#include <utility> // used for std::pair
 
 #include "Game.h"
 #include "cell.h"
@@ -47,9 +47,12 @@ public:
     int getSize() const { return gridDimension; }
     int getPlayerStartingPosX() const { return playerStartingPosX; }
     int getPlayerStartingPosY() const { return playerStartingPosY; }
+    int getPlayerStartingScreenPosX() const { return getCell(playerStartingPosX, playerStartingPosY).x; }
+    int getPlayerStartingScreenPosY() const { return getCell(playerStartingPosX, playerStartingPosY).y; }
     int getPlayerBaseHealth() const { return playerBaseHealth; }
     int getNumberCellWidth() const { return numberCellWidth; }
     int getNumberCellHeight() const { return numberCellHeight; }
+    std::pair<int, int> getScreenPos(int x, int y) const { return std::make_pair(grid[x][y].x,grid[x][y].y); }
 
     
     // Safe setter for the grid
@@ -61,11 +64,14 @@ public:
     void setPlayerStartingPosX(int x) { playerStartingPosX = x; }
     void setPlayerStartingPosY(int y) { playerStartingPosY = y; }
     void setPlayerBaseHealth(int h) { playerBaseHealth = h; }
+
+    // Utility
+    bool isOutOfMap(int x, int y) { return getCell(x, y).cellType == NO_RENDER; }
     
     // Methods
     void loadMap(char* filePath);
     void drawMap();
     void createBaseMap(int windowHeight, int windowWidth);
 
-    void findClickedCell(int x, int y);
+    std::pair<int, int> findClickedCell(int x, int y);
 };

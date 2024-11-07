@@ -1,3 +1,5 @@
+#include <bitset>
+#include <cmath>
 #include <iostream>
 #include <utility>
 
@@ -241,8 +243,8 @@ void Map::createBaseMap(int windowHeight, int windowWidth)
     }
 
     // Stuff that is not related to drawing the grid
-    this->setPlayerStartingPosX(14);
-    this->setPlayerStartingPosY(14);
+    this->setPlayerStartingPosX(16);
+    this->setPlayerStartingPosY(16);
     this->setPlayerBaseHealth(40);
 
     // To save the grid:
@@ -254,48 +256,112 @@ void Map::createBaseMap(int windowHeight, int windowWidth)
 
 // Find which cell wat clicked on given two coordinates.
 
-void Map::findClickedCell(int x, int y)
+std::pair<int, int> Map::findClickedCell(int x, int y)
 {
 
+    // Calculate offsets
     int xOffset = (Game::windowWidth - ((cellTextureDimension.second * scale - scale * 2) * numberCellWidth)) / 2;
     int yOffset = (Game::windowHeight - ((cellTextureDimension.first * scale - scale) * numberCellHeight)) / 2;
 
-    // CHeck if x and y are in bound
-    if (x > xOffset && x < (Game::windowWidth - xOffset) && y > yOffset && y < Game::windowHeight - yOffset)
+    // Early return if click is outside the grid area
+    if (x < xOffset || x >= (Game::windowWidth - xOffset) ||
+        y < yOffset || y >= (Game::windowHeight - yOffset))
     {
-        // find the cell where x is valid
-
-        int i, j = getSize() / 2;
-        int xCell = getCell(i, j).x;
-        int yCell = getCell(i, j).y;
-
-        // Determine the direction to move: +1 if y < yCell, -1 if y > yCell
-        int direction = (x < xCell) ? 1 : -1;
-        
-        while ((direction == 1 && x <= xCell) || (direction == -1 && x >= xCell))
-        {
-            i -= direction;
-            j += direction;
-            xCell = getCell(i, j).x;
-        }
-
-        // Determine the direction to move: +1 if y < yCell, -1 if y > yCell
-        direction = (y < yCell) ? 1 : -1;
-        while ((direction == 1 && y <= yCell) || (direction == -1 && y >= yCell))
-        {
-            i += direction;
-            j += direction;
-            yCell = getCell(i, j).y;
-        }
-
-        std::cout << "i : " << i << std::endl;
-        std::cout << "j : " << j << std::endl;
-
-        
+        // std::cout << "Click outside grid bounds" << std::endl;
+        return std::make_pair(-99, -99);
     }
 
-    // Find x ( 3 max ) multiple)
-    // 2 pointers problem
+    // Get the info of the center of the grid
+    int i = getSize() / 2, j = getSize() / 2;
+    int xCell = getCell(i, j).x;
+    int yCell = getCell(i, j).y;
 
-    // find y
+    // The goal here is to find which cell we click on from the center. we either go up/down and/or right/left
+    int directionX = (x < xCell) ? 1 : -1;
+    while ((directionX == 1 && x <= xCell) || (directionX == -1 && x >= xCell && x > (xCell + cellTextureDimension.second)))
+    {
+        i += directionX;
+        j -= directionX;
+        xCell = getCell(i, j).x;
+    }
+
+    // Determine the direction for the y movement
+    int directionY = (y < yCell) ? -1 : 1;
+    while ((directionY == -1 && y <= yCell) || (directionY == 1 && y >= yCell && y > (yCell + cellTextureDimension.first)))
+    {
+        i += directionY;
+        j += directionY;
+        yCell = getCell(i, j).y;
+    }
+
+    // At this point we have an approximation of the cell we want to use (as sprites are superposed on top of each other it can be tricky).
+    // But the valid postion can only be the one we have, or be on cell away.
+
+    // Top corner pos to get the 4 points of out diamond shape inside the sprite
+    int topCornerX = getCell(i, j).x, topCornerY = getCell(i, j).y;
+
+    std::pair<int, int> topPoint{topCornerX + cellTextureDimension.second / 2, topCornerY};
+    std::pair<int, int> rightPoint{topCornerX + cellTextureDimension.second, topCornerY + cellTextureDimension.first / 2};
+    std::pair<int, int> bottomPoint{topCornerX + cellTextureDimension.second / 2, topCornerY + cellTextureDimension.first};
+    std::pair<int, int> leftPoint{topCornerX, topCornerY + cellTextureDimension.first / 2};
+
+    std::array<std::pair<int, int>, 5> points = {
+        topPoint,
+        rightPoint,
+        bottomPoint,
+        leftPoint,
+        topPoint};
+
+    // Calculate the line formula of each side of the diamong (ax + b)
+    
+    // Nested function to calculate slope
+    auto calculateSlope = [](const std::pair<int, int> &p1, const std::pair<int, int> &p2)
+    {
+        return static_cast<double>(p2.second - p1.second) / (p2.first - p1.first);
+    };
+
+    // Nested function to calculate intercept
+    auto calculateIntercept = [](const std::pair<int, int> &point, double slope)
+    {
+        return static_cast<double>(point.second) - (slope * point.first);
+    };
+
+    // We use this bit check to see if we want our point to be above or below a line
+    std::bitset<4> bits("1001");
+
+    for (int p = 0; p < 4; p++)
+    {
+        double a = calculateSlope(points[p], points[p + 1]);
+        double b = calculateIntercept(points[p], a);
+
+        double lineY = a * x + b;
+
+        // Based on where our point is, we change the cell we return
+        if (y < lineY == bits[p])
+        {
+            switch (p)
+            {
+            case 0:
+                i--;
+                break;
+            case 1:
+                j++;
+                break;
+            case 2:
+                i++;
+                break;
+            case 3:
+                j--;
+                break;
+            default:
+                break;
+            }
+            // To make sure we are not clicking outside our visible grid
+            if (isOutOfMap(i, j))
+            {
+                return std::make_pair(-99, -99); // invalid value
+            }
+        }
+    }
+    return std::make_pair(i, j);
 }

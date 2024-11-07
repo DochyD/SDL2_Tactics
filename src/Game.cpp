@@ -1,6 +1,7 @@
 // Standard library
 #include <iostream>
 #include <stdexcept>
+#include <utility>
 
 // Project include
 #include "Game.h"
@@ -67,10 +68,14 @@ Game::Game(const char *title, const int width, const int height)
     TextureManager::LoadCharacterTexture("assets/sprites/player.png");
     TextureManager::LoadEnemyTexture("assets/sprites/enemy.png");
 
+
+
     player = new Player(
         map->getPlayerBaseHealth(),
         map->getPlayerStartingPosX(),
         map->getPlayerStartingPosY(),
+        map->getPlayerStartingScreenPosX(),
+        map->getPlayerStartingScreenPosY(),
         TextureManager::playerTexture);
 
     std::cout << TextureManager::playerTexture << std::endl;
@@ -129,62 +134,77 @@ void Game::processEvents()
     // uncomment if feels slow when moving mouse.
     SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-            case SDL_QUIT:
-                std::clog << "Event : Quit game." << std::endl;
-                isRunning = false;
-                return;
+    while (SDL_PollEvent(&event))
+    {
+        switch (event.type)
+        {
+        case SDL_QUIT:
+            std::clog << "Event : Quit game." << std::endl;
+            isRunning = false;
+            return;
 
-            case SDL_WINDOWEVENT:
-                if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-                    std::clog << "Event : Window resized." << std::endl;
-                    windowWidth = event.window.data1;
-                    windowHeight = event.window.data2;
-                }
+        case SDL_WINDOWEVENT:
+            if (event.window.event == SDL_WINDOWEVENT_RESIZED)
+            {
+                std::clog << "Event : Window resized." << std::endl;
+                windowWidth = event.window.data1;
+                windowHeight = event.window.data2;
+            }
+            break;
+
+        case SDL_KEYDOWN:
+            switch (event.key.keysym.sym)
+            {
+            case SDLK_1:
+                std::cout << "Key 1 pressed." << std::endl;
                 break;
-
-            case SDL_KEYDOWN:
-                switch (event.key.keysym.sym) {
-                    case SDLK_1:
-                        std::cout << "Key 1 pressed." << std::endl;
-                        break;
-                    case SDLK_2:
-                        std::cout << "Key 2 pressed." << std::endl;
-                        break;
-                    case SDLK_3:
-                        std::cout << "Key 3 pressed." << std::endl;
-                        break;
-                    case SDLK_4:
-                        std::cout << "Key 4 pressed." << std::endl;
-                        break;
-                    case SDLK_ESCAPE:
-                        std::cout << "Escape key pressed." << std::endl;
-                        break;
-                    default:
-                        std::cout << "Invalid key pressed." << std::endl;
-                        break;
-                }
+            case SDLK_2:
+                std::cout << "Key 2 pressed." << std::endl;
                 break;
-
-            case SDL_MOUSEBUTTONDOWN:
-                switch (event.button.button) {
-                    case SDL_BUTTON_LEFT: {
-                        int x = event.button.x;
-                        int y = event.button.y;
-                        std::cout << "Left mouse button pressed at (" << x << ", " << y << ")" << std::endl;
-                        map->findClickedCell(x, y);
-                        
-                        break;
-                    }
-                    default:
-                        std::cout << "Invalid mouse button pressed." << std::endl;
-                        break;
-                }
+            case SDLK_3:
+                std::cout << "Key 3 pressed." << std::endl;
                 break;
-
+            case SDLK_4:
+                std::cout << "Key 4 pressed." << std::endl;
+                break;
+            case SDLK_ESCAPE:
+                std::cout << "Escape key pressed." << std::endl;
+                break;
             default:
+                std::cout << "Invalid key pressed." << std::endl;
                 break;
+            }
+            break;
+
+        case SDL_MOUSEBUTTONDOWN:
+            switch (event.button.button)
+            {
+            case SDL_BUTTON_LEFT:
+            {
+                int x = event.button.x;
+                int y = event.button.y;
+                std::cout << "Left mouse button pressed at (" << x << ", " << y << ")" << std::endl;
+                auto pos = map->findClickedCell(x, y);
+                
+                std::cout << pos.first << std::endl;
+                std::cout << pos.second << std::endl;
+                
+                if (pos.first != -99) // invalid pos
+                {
+                    auto screenPos = map->getScreenPos(pos.first, pos.second);
+                    player->setScreenPos(screenPos.first, screenPos.second);
+                }
+
+                break;
+            }
+            default:
+                std::cout << "Invalid mouse button pressed." << std::endl;
+                break;
+            }
+            break;
+
+        default:
+            break;
         }
     }
 }
