@@ -1,15 +1,16 @@
 #include "Character.h"
 #include "TextureManager.h"
 
-Character::Character(int hp, int x, int y, int screenX, int screenY, SDL_Texture *cTexture)
+Character::Character(const Map& mMap, SDL_Texture *cTexture) : map(mMap)
 {
-    healtPoint = hp;
 
-    xPos = x;
-    yPos = y;
+    healtPoint = map.getPlayerBaseHealth();
 
-    xScreen = screenX;
-    yScreen = screenY;
+    xPos = map.getPlayerStartingPosX();
+    yPos = map.getPlayerStartingPosY();
+
+    xScreen = map.getPlayerStartingScreenPosX();
+    yScreen = map.getPlayerStartingScreenPosY();
 
     charTexture = cTexture;
 }

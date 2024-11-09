@@ -18,7 +18,7 @@ int Game::windowHeight;
 
 // init those object to null because SDL is not initilized yet
 Map *Game::map = nullptr;
-Character *Game::player = nullptr;
+Player *Game::player = nullptr;
 
 // Constructor
 Game::Game(const char *title, const int width, const int height)
@@ -54,31 +54,25 @@ Game::Game(const char *title, const int width, const int height)
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     }
 
-    // To handle window resize automatically
+    // TODO : Handle window resize automatically
     // SDL_RenderSetLogicalSize(renderer, width, height);
 
     isRunning = true;
     windowWidth = width;
     windowHeight = height;
 
-    // test zone
+    // Create map / load map
     map = new Map();
     map->loadMap("base_map.json");
 
+    // Load textures (that are not for the map)
     TextureManager::LoadCharacterTexture("assets/sprites/player.png");
     TextureManager::LoadEnemyTexture("assets/sprites/enemy.png");
+    TextureManager::LoadEnemyTexture("assets/sprites/enemy.png");
 
+    // Initiate player
+    player = new Player(*map, TextureManager::playerTexture);
 
-
-    player = new Player(
-        map->getPlayerBaseHealth(),
-        map->getPlayerStartingPosX(),
-        map->getPlayerStartingPosY(),
-        map->getPlayerStartingScreenPosX(),
-        map->getPlayerStartingScreenPosY(),
-        TextureManager::playerTexture);
-
-    std::cout << TextureManager::playerTexture << std::endl;
 }
 
 // Destructor
@@ -138,11 +132,12 @@ void Game::processEvents()
     {
         switch (event.type)
         {
+        // Quitting the game
         case SDL_QUIT:
             std::clog << "Event : Quit game." << std::endl;
             isRunning = false;
             return;
-
+        // Resizing the window
         case SDL_WINDOWEVENT:
             if (event.window.event == SDL_WINDOWEVENT_RESIZED)
             {
@@ -151,29 +146,9 @@ void Game::processEvents()
                 windowHeight = event.window.data2;
             }
             break;
-
+        
         case SDL_KEYDOWN:
-            switch (event.key.keysym.sym)
-            {
-            case SDLK_1:
-                std::cout << "Key 1 pressed." << std::endl;
-                break;
-            case SDLK_2:
-                std::cout << "Key 2 pressed." << std::endl;
-                break;
-            case SDLK_3:
-                std::cout << "Key 3 pressed." << std::endl;
-                break;
-            case SDLK_4:
-                std::cout << "Key 4 pressed." << std::endl;
-                break;
-            case SDLK_ESCAPE:
-                std::cout << "Escape key pressed." << std::endl;
-                break;
-            default:
-                std::cout << "Invalid key pressed." << std::endl;
-                break;
-            }
+            player->addEventToQueue(event);
             break;
 
         case SDL_MOUSEBUTTONDOWN:
@@ -185,9 +160,6 @@ void Game::processEvents()
                 int y = event.button.y;
                 std::cout << "Left mouse button pressed at (" << x << ", " << y << ")" << std::endl;
                 auto pos = map->findClickedCell(x, y);
-                
-                std::cout << pos.first << std::endl;
-                std::cout << pos.second << std::endl;
                 
                 if (pos.first != -99) // invalid pos
                 {
@@ -213,6 +185,7 @@ void Game::processEvents()
 void Game::update()
 {
     // test
+    player->update();
 }
 
 // Render game

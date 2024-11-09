@@ -4,7 +4,7 @@
 #include <SDL2/SDL_image.h>
 
 class Map;
-class Character;
+class Player;
 
 class Game
 {
@@ -18,7 +18,7 @@ private:
     static Map *map;
     
     // Characters
-    static Character *player;
+    static Player *player;
 
 
 public:
