@@ -19,3 +19,14 @@ Character::~Character()
 {
     
 }
+
+void Character::setPos(int x, int y)
+{
+    // Update player pos
+    xPos = x;
+    yPos = y;
+
+    // Update palyer screen pos
+    auto [xScreen, yScreen] = map.getScreenPos(x, y);
+    setScreenPos(xScreen, yScreen);
+}

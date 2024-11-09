@@ -14,7 +14,9 @@ private:
     SDL_Texture *charTexture;
     std::pair<int, int> charTextureDimension{45, 90};
 
+protected:
     // Ref to the map.
+    // We want the derivated class to access it.
     const Map& map;
 
 public:
@@ -31,8 +33,9 @@ public:
 
     // Setters
     void setHealthPoint(int hp) { healtPoint = hp; }
-    void setPos(int x, int y) { xPos = x; yPos = y; }
+    void setPos(int x, int y);
     void setScreenPos(int x, int y) { xScreen = x; yScreen = y; }
+    void removeHealtPoint(int hp) { healtPoint -= hp ; }
 
     // Texture 
     SDL_Texture *getCharTexture() { return charTexture; }

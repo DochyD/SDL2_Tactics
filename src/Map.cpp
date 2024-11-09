@@ -256,7 +256,7 @@ void Map::createBaseMap(int windowHeight, int windowWidth)
 
 // Find which cell wat clicked on given two coordinates.
 
-std::pair<int, int> Map::findClickedCell(int x, int y)
+std::pair<int, int> Map::findClickedCell(int x, int y) const
 {
 
     // Calculate offsets
@@ -313,7 +313,7 @@ std::pair<int, int> Map::findClickedCell(int x, int y)
         topPoint};
 
     // Calculate the line formula of each side of the diamong (ax + b)
-    
+
     // Nested function to calculate slope
     auto calculateSlope = [](const std::pair<int, int> &p1, const std::pair<int, int> &p2)
     {

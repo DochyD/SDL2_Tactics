@@ -66,9 +66,7 @@ Game::Game(const char *title, const int width, const int height)
     map->loadMap("base_map.json");
 
     // Load textures (that are not for the map)
-    TextureManager::LoadCharacterTexture("assets/sprites/player.png");
-    TextureManager::LoadEnemyTexture("assets/sprites/enemy.png");
-    TextureManager::LoadEnemyTexture("assets/sprites/enemy.png");
+    TextureManager::LoadBaseMapTextures();
 
     // Initiate player
     player = new Player(*map, TextureManager::playerTexture);
@@ -79,7 +77,7 @@ Game::Game(const char *title, const int width, const int height)
 Game::~Game()
 {
 
-    TextureManager::DestroyTextures();
+    TextureManager::DestroyBaseMapTextures();
     delete map;
     delete player;
 
@@ -152,28 +150,31 @@ void Game::processEvents()
             break;
 
         case SDL_MOUSEBUTTONDOWN:
-            switch (event.button.button)
-            {
-            case SDL_BUTTON_LEFT:
-            {
-                int x = event.button.x;
-                int y = event.button.y;
-                std::cout << "Left mouse button pressed at (" << x << ", " << y << ")" << std::endl;
-                auto pos = map->findClickedCell(x, y);
-                
-                if (pos.first != -99) // invalid pos
-                {
-                    auto screenPos = map->getScreenPos(pos.first, pos.second);
-                    player->setScreenPos(screenPos.first, screenPos.second);
-                }
-
-                break;
-            }
-            default:
-                std::cout << "Invalid mouse button pressed." << std::endl;
-                break;
-            }
+            player->addEventToQueue(event);
             break;
+            // switch (event.button.button)
+            // {
+            // case SDL_BUTTON_LEFT:
+            // {
+            //     int x = event.button.x;
+            //     int y = event.button.y;
+            //     std::cout << "Left mouse button pressed at (" << x << ", " << y << ")" << std::endl;
+            //     auto pos = map->findClickedCell(x, y);
+                
+            //     // if (pos.first != -99) // invalid pos
+            //     // {
+            //     //     auto screenPos = map->getScreenPos(pos.first, pos.second);
+            //     //     player->setPos(pos.first, pos.second);
+            //     //     player->setScreenPos(screenPos.first, screenPos.second);
+            //     // }
+
+            //     break;
+            // }
+            // default:
+            //     std::cout << "Invalid mouse button pressed." << std::endl;
+            //     break;
+            // }
+            // break;
 
         default:
             break;

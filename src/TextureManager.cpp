@@ -48,30 +48,20 @@ namespace TextureManager
         SDL_DestroyTexture(tex);
     }
 
-    // Function to destroy all texture
-    void DestroyTextures()
+    // Load texture for the base map
+    void LoadBaseMapTextures()
+    {
+        playerTexture = LoadTexture("assets/sprites/player.png");
+        enemyTexture = LoadTexture("assets/sprites/enemy.png");
+        spellRangeTile = LoadTexture("assets/sprites/spellSelectionCell.png");
+    }
+
+    // Destroy texture for the base map
+    void DestroyBaseMapTextures()
     {
         SDL_DestroyTexture(playerTexture);
         SDL_DestroyTexture(enemyTexture);
         SDL_DestroyTexture(spellRangeTile);
-    }
-
-    // Load texture for the player
-    void LoadCharacterTexture(const char *fileName)
-    {
-        playerTexture = LoadTexture(fileName);
-    }
-
-    // Load texture for the enemy
-    void LoadEnemyTexture(const char *fileName)
-    {
-        enemyTexture = LoadTexture(fileName);
-    }
-
-    // Load texture for the spell range
-    void LoadSpellRangeTexture(const char *fileName)
-    {
-        spellRangeTile = LoadTexture(fileName);
     }
 
     // Draw texture on screen for a give pos.
