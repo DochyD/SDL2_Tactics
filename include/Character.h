@@ -1,3 +1,5 @@
+#pragma once
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
@@ -34,6 +36,8 @@ public:
     // Setters
     void setHealthPoint(int hp) { healtPoint = hp; }
     void setPos(int x, int y);
+    void setPosX(int x) { setPos(x, yPos); }
+    void setPosY(int y) { setPos(xPos, y); }
     void setScreenPos(int x, int y) { xScreen = x; yScreen = y; }
     void removeHealtPoint(int hp) { healtPoint -= hp ; }
 

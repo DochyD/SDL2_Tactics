@@ -8,6 +8,7 @@
 #include "TextureManager.h"
 #include "Map.h"
 #include "Player.h"
+#include "Enemy.h"
 
 // Initialize static member to nullptr (SDL not initialized yet)
 SDL_Renderer *Game::renderer = nullptr;
@@ -19,6 +20,8 @@ int Game::windowHeight;
 // init those object to null because SDL is not initilized yet
 Map *Game::map = nullptr;
 Player *Game::player = nullptr;
+
+std::vector<Enemy *> enemies;
 
 // Constructor
 Game::Game(const char *title, const int width, const int height)
@@ -71,6 +74,8 @@ Game::Game(const char *title, const int width, const int height)
     // Initiate player
     player = new Player(*map, TextureManager::playerTexture);
 
+    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 16, 25));
+    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 20, 16));
 }
 
 // Destructor
@@ -144,7 +149,7 @@ void Game::processEvents()
                 windowHeight = event.window.data2;
             }
             break;
-        
+
         case SDL_KEYDOWN:
             player->addEventToQueue(event);
             break;
@@ -152,29 +157,6 @@ void Game::processEvents()
         case SDL_MOUSEBUTTONDOWN:
             player->addEventToQueue(event);
             break;
-            // switch (event.button.button)
-            // {
-            // case SDL_BUTTON_LEFT:
-            // {
-            //     int x = event.button.x;
-            //     int y = event.button.y;
-            //     std::cout << "Left mouse button pressed at (" << x << ", " << y << ")" << std::endl;
-            //     auto pos = map->findClickedCell(x, y);
-                
-            //     // if (pos.first != -99) // invalid pos
-            //     // {
-            //     //     auto screenPos = map->getScreenPos(pos.first, pos.second);
-            //     //     player->setPos(pos.first, pos.second);
-            //     //     player->setScreenPos(screenPos.first, screenPos.second);
-            //     // }
-
-            //     break;
-            // }
-            // default:
-            //     std::cout << "Invalid mouse button pressed." << std::endl;
-            //     break;
-            // }
-            // break;
 
         default:
             break;
@@ -185,8 +167,44 @@ void Game::processEvents()
 // Update game state
 void Game::update()
 {
-    // test
+    // To check if the player's postion got updated
+    int xPlayer = player->getPosX();
+    int yPlayer = player->getPosY();
+
     player->update();
+
+    // If the player pos got updated, then we need to update the enemies.
+    if (xPlayer != player->getPosX() || yPlayer != player->getPosY())
+    {
+        std::cout << "updateEnemies" << std::endl;
+       updateEnemies(enemies);
+    }
+
+    if(enemies.empty())
+    {
+        std::cout << "ggwpezpz" << std::endl;
+    }
+
+}
+
+void Game::updateEnemies(std::vector<Enemy *> &enemies)
+{
+    // Iterate through the vector in reverse order
+    // This way, removing elements doesn't affect the index of remaining elements
+    for (int i = static_cast<int>(enemies.size()) - 1; i >= 0; i--)
+    {
+        if (player->getPosX() == enemies[i]->getPosX() && player->getPosY() == enemies[i]->getPosY())
+        {
+            // Remove the enemy if its x-position is 0
+            delete enemies[i];
+            enemies.erase(enemies.begin() + i);
+        }
+        else
+        {
+            // Decrease the x-position of the enemy
+            enemies[i]->update(player->getPosX(), player->getPosY());
+        }
+    }
 }
 
 // Render game
@@ -201,6 +219,10 @@ void Game::render()
 
     // Render player
     player->draw();
+    for (auto e : enemies)
+    {
+        e->draw();
+    }
 
     SDL_RenderPresent(renderer);
 }

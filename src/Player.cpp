@@ -7,7 +7,12 @@
 
 Player::Player(const Map &map, SDL_Texture *cTexture) : Character(map, cTexture)
 {
-    // Add stuff related to spells I guess ~
+    // Set heealt point
+    setHealthPoint(map.getPlayerBaseHealth());
+
+    // Set starting position
+    setPos(map.getPlayerStartingPosX(), map.getPlayerStartingPosY());
+
 }
 
 Player::~Player()

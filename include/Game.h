@@ -3,8 +3,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include <vector>
+
 class Map;
 class Player;
+class Enemy;
 
 class Game
 {
@@ -19,6 +22,7 @@ private:
     
     // Characters
     static Player *player;
+    std::vector<Enemy*> enemies;
 
 
 public:
@@ -38,4 +42,6 @@ public:
     void handleResize(SDL_Event &event);
     void update();
     void render();
+
+    void updateEnemies(std::vector<Enemy*>& enemies);
 };

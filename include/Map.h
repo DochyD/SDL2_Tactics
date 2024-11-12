@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility> // used for std::pair
+#include <vector>
 
 #include "Game.h"
 #include "cell.h"
@@ -22,11 +23,15 @@ private:
     SDL_Texture *cellLight = nullptr;
     SDL_Texture *cellDark = nullptr;
 
-    // Player info
+    // Player base info
     int playerBaseHealth;
     int playerStartingPosX;
     int playerStartingPosY;
 
+    // Entities on board
+    Player* player = nullptr;
+    std::vector<Enemy*> enemies;
+    
 public:
     // Constructor/Destructor
     Map();
