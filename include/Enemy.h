@@ -9,6 +9,9 @@
 
 class Enemy : public Character
 {
+private:
+    // used in the update method to change logic
+    bool nextToKilledEnemy =  false;
 
 public:
     // Constructor / Destructor
@@ -20,4 +23,6 @@ public:
     void draw();
     void update();
     void update(int playerX, int playerY);
+
+    void setNextToKilledEnemy(bool b) { nextToKilledEnemy = b; }
 };

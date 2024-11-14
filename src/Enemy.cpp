@@ -55,48 +55,44 @@ void Enemy::update()
 
 void Enemy::update(int playerX, int playerY)
 {
-    int x = getPosX();
-    int y = getPosY();
-    // Find which direction the enemy needs to do!
-    std::cout << "-----" << std::endl;
-    std::cout << "x : " << x << std::endl;
-    std::cout << "y : " << y << std::endl;
-
-    int diffX = abs(playerX - x);
-    int diffY = abs(playerY - y);
-
-    int dirX = (playerX > x) ? 1 : (playerX < x) ? -1 : 0;
-    int dirY = (playerY > y) ? 1 : (playerY < y) ? -1 : 0;
-
-    if (diffX == diffY)
+    if (nextToKilledEnemy)
     {
-        setPos(x + dirX, y + dirY); // Move diagonally
-    }
-    else if (diffX > diffY)
-    {
-        setPosX(x + dirX); // Move horizontally
+        setNextToKilledEnemy(false);
     }
     else
     {
-        setPosY(y + dirY); // Move vertically
-    }
+        int x = getPosX();
+        int y = getPosY();
 
-    
-    std::cout << "x : " << getPosX() << std::endl;
-    std::cout << "y : " << getPosY() << std::endl;
-    
-    std::cout << "diffX : " << diffX << std::endl;
-    std::cout << "diffY : " << diffY << std::endl;
+        int diffX = abs(playerX - x);
+        int diffY = abs(playerY - y);
 
-    std::cout << "dirX : " << dirX << std::endl;
-    std::cout << "dirY : " << dirY << std::endl;
+        int dirX = (playerX > x) ? 1 : (playerX < x) ? -1
+                                                     : 0;
+        int dirY = (playerY > y) ? 1 : (playerY < y) ? -1
+                                                     : 0;
 
+        // Different rules if the enemy is next to the player  (cell around + diagonal)
 
+        if (diffX == diffY)
+        {
+            setPos(x + dirX, y + dirY); // Move diagonally
+        }
+        else if (diffX > diffY)
+        {
+            setPosX(x + dirX); // Move horizontally
+        }
+        else
+        {
+            setPosY(y + dirY); // Move vertically
+        }
 
+        // TODO : Check colision between enemies...
 
-    // Check if new position is equal to player postion -> game over
-    if (getPosX() == playerX && getPosY() == playerY)
-    {
-        std::cout << "Game over" << std::endl;
+        // Check if new position is equal to player postion -> game over
+        if (getPosX() == playerX && getPosY() == playerY)
+        {
+            std::cout << "Game over enemy kill" << std::endl;
+        }
     }
 }

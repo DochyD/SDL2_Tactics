@@ -19,6 +19,9 @@ private:
 
     // Map
     static Map *map;
+
+    // to know if a map is over
+    bool levelGameOver = false;
     
     // Characters
     static Player *player;
@@ -37,6 +40,9 @@ public:
     Game(const char *title, const int width, const int height);
     ~Game();
 
+    bool getGameOver() { return levelGameOver;}
+    void setRunning(bool b) { isRunning = b; }
+
     bool running() { return isRunning; };
     void processEvents();
     void handleResize(SDL_Event &event);
@@ -44,4 +50,6 @@ public:
     void render();
 
     void updateEnemies(std::vector<Enemy*>& enemies);
+
+   
 };

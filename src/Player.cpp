@@ -67,6 +67,7 @@ void Player::processEventQueue()
         eventQueue.pop();
         switch (event.type)
         {
+        // Process spells
         case SDL_KEYDOWN:
             switch (event.key.keysym.sym)
             {
@@ -86,6 +87,7 @@ void Player::processEventQueue()
                 // std::cout << "Invalid key pressed." << std::endl;
                 break;
             }
+        // Process mouse click
         case SDL_MOUSEBUTTONDOWN:
             switch (event.button.button)
             {

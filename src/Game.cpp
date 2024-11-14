@@ -67,15 +67,28 @@ Game::Game(const char *title, const int width, const int height)
     // Create map / load map
     map = new Map();
     map->loadMap("base_map.json");
-
+    levelGameOver = false;
     // Load textures (that are not for the map)
     TextureManager::LoadBaseMapTextures();
+
 
     // Initiate player
     player = new Player(*map, TextureManager::playerTexture);
 
-    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 16, 25));
-    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 20, 16));
+    //enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 16, 25));
+    //enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 20, 16));
+
+    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 15, 16));
+    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 15, 17));
+    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 14, 18));
+    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 13, 19));
+    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 12, 20));
+    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 11, 21));
+
+    //enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 15, 14));
+    // enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 15, 15));
+    // enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 15, 17));
+    // enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 15, 18));
 }
 
 // Destructor
@@ -167,46 +180,87 @@ void Game::processEvents()
 // Update game state
 void Game::update()
 {
-    // To check if the player's postion got updated
-    int xPlayer = player->getPosX();
-    int yPlayer = player->getPosY();
 
-    player->update();
+        // To check if the player's postion got updated
+        int xPlayer = player->getPosX();
+        int yPlayer = player->getPosY();
 
-    // If the player pos got updated, then we need to update the enemies.
-    if (xPlayer != player->getPosX() || yPlayer != player->getPosY())
-    {
-        std::cout << "updateEnemies" << std::endl;
-       updateEnemies(enemies);
-    }
+        player->update();
 
-    if(enemies.empty())
-    {
-        std::cout << "ggwpezpz" << std::endl;
-    }
+        // If the player pos got updated, then we need to update the enemies.
+        if (xPlayer != player->getPosX() || yPlayer != player->getPosY())
+        {
+            updateEnemies(enemies);
+        }
+
+        if (enemies.empty())
+        {
+            // Trigger end of game
+            std::cout << "ggwpezpz" << std::endl;
+        }
 
 }
 
 void Game::updateEnemies(std::vector<Enemy *> &enemies)
 {
+
     // Iterate through the vector in reverse order
     // This way, removing elements doesn't affect the index of remaining elements
     for (int i = static_cast<int>(enemies.size()) - 1; i >= 0; i--)
     {
         if (player->getPosX() == enemies[i]->getPosX() && player->getPosY() == enemies[i]->getPosY())
         {
-            // Remove the enemy if its x-position is 0
+            // Remove the enemy player is on enemy position
             delete enemies[i];
             enemies.erase(enemies.begin() + i);
-        }
-        else
-        {
-            // Decrease the x-position of the enemy
-            enemies[i]->update(player->getPosX(), player->getPosY());
+
+            // Check if they are enemies around
+            // If so the enemy gets pushed by one cell and comes back
+            // if it collides with another enemy, game over
+            for (auto &enemy : enemies)
+            {
+                if (enemy->getPosX() >= player->getPosX() - 1 && enemy->getPosX() <= player->getPosX() + 1 &&
+                    enemy->getPosY() >= player->getPosY() - 1 && enemy->getPosY() <= player->getPosY() + 1)
+                {
+                    // enemy won't move as it's going one cell further and comes back instantly
+                    enemy->setNextToKilledEnemy(true);
+
+                    // We need to check if during it's movement it collided with another enemy
+                    int x = enemy->getPosX();
+                    int y = enemy->getPosY();
+                    int playerX = player->getPosX();
+                    int playerY = player->getPosY();
+
+                    // Test if aonther enemy at those positions
+                    int newX = playerX + (x - playerX) * 2;
+                    int newY = playerY + (y - playerY) * 2;
+
+                    for (auto &e : enemies)
+                    {
+                        // Game over
+                        if (e->getPosX() == newX && e->getPosY() == newY)
+                        {
+                            std::cout << "Game over collide" << std::endl;
+                            levelGameOver = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            break;
         }
     }
-}
 
+    if (!levelGameOver)
+    {
+        // Update enemy position
+        for (auto e : enemies)
+        {
+            e->update(player->getPosX(), player->getPosY());
+        }
+    }
+
+}
 // Render game
 void Game::render()
 {

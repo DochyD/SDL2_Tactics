@@ -31,23 +31,31 @@ int main()
 	while (game->running())
 	{
 
-		// Fps managment
-		frameStart = SDL_GetTicks();
-
-		// Process events (user inputs/window resize)
-		game->processEvents();
-
-		// update game state
-		game->update();
-
-		// render game
-		game->render();
-
-		// Delay next iteration based on time left to reach next frame
-		frameTime = SDL_GetTicks() - frameStart;
-		if (frameDuration > frameTime)
+		// // Check if game is over
+		if (game->getGameOver())
 		{
-			SDL_Delay(frameDuration - frameTime);
+			std::cout << "Game over ---- " << std::endl;
+			game->setRunning(false);
+		}
+		else
+		{
+			frameStart = SDL_GetTicks();
+
+			// Process events (user inputs/window resize)
+			game->processEvents();
+
+			// update game state
+			game->update();
+
+			// render game
+			game->render();
+
+			// Delay next iteration based on time left to reach next frame
+			frameTime = SDL_GetTicks() - frameStart;
+			if (frameDuration > frameTime)
+			{
+				SDL_Delay(frameDuration - frameTime);
+			}
 		}
 	}
 
