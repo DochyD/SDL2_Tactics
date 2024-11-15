@@ -16,6 +16,7 @@ packages I've installed to dev :
 - nlohmann-json
 - sdl2
 - sdl2_image
+- sdl2_ttf
 
 Sprites made with 'Pixelorama'
 

@@ -4,61 +4,49 @@
 #include <stdio.h>
 #include <string>
 
+// Third Party Libraries
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+// Constants
+#include "define.h"
+
+// Project Specific headers
 #include "Game.h"
+#include "MenuState.h"
 
 int main()
 {
+	// Init game
+	Game game = Game(WINDOW_NAME, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT);
+	game.setState(new MenuState());
 
-	Game *game = nullptr;
+	// Set game state to MAIN_MENU
 
-	const char *WINDOW_NAME = "SDL2 Tactics";
-	const float BASE_WINDOW_WIDTH = 1400;
-	const float BASE_WINDOW_HEIGHT = 1050;
-
-	const int FPS = 30;
-	const int frameDuration = 1000 / FPS;
-
+	// Variable for fps managment
 	Uint32 frameStart;
 	int frameTime;
 
-	// Init game
-	game = new Game(WINDOW_NAME, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT);
-
 	// Game loop
-	while (game->running())
+	while (game.running())
 	{
 
-		// // Check if game is over
-		if (game->getGameOver())
+		// Get tick mesure process duration latter
+		frameStart = SDL_GetTicks();
+
+		// Game logic
+		game.processEvents();
+		game.update();
+		game.render();
+
+		// Delay next iteration based on time left to reach next frame
+		frameTime = SDL_GetTicks() - frameStart;
+		if (FRAME_DURATION > frameTime)
 		{
-			std::cout << "Game over ---- " << std::endl;
-			game->setRunning(false);
-		}
-		else
-		{
-			frameStart = SDL_GetTicks();
-
-			// Process events (user inputs/window resize)
-			game->processEvents();
-
-			// update game state
-			game->update();
-
-			// render game
-			game->render();
-
-			// Delay next iteration based on time left to reach next frame
-			frameTime = SDL_GetTicks() - frameStart;
-			if (frameDuration > frameTime)
-			{
-				SDL_Delay(frameDuration - frameTime);
-			}
+			SDL_Delay(FRAME_DURATION - frameTime);
 		}
 	}
 
-	// Call destructor > kill window/renderer/sdl...
-	delete game;
+	// SDL ressources are cleaned up inside the Game object's destructor
+	return 0;
 }
