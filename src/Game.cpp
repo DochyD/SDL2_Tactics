@@ -4,15 +4,17 @@
 #include <utility>
 
 // Project include
+#include "GameState.h"
 #include "Game.h"
 #include "TextureManager.h"
-#include "FontManager.h"
+#include "TextManager.h"
 #include "Map.h"
 #include "Player.h"
 #include "Enemy.h"
 
 // Initialize static member to nullptr (SDL not initialized yet)
 SDL_Renderer *Game::renderer = nullptr;
+GameState *Game::currentState = nullptr;
 SDL_Event Game::event;
 
 int Game::windowWidth;
@@ -64,10 +66,6 @@ Game::Game(const char *title, const int width, const int height)
         std::cerr << "Failed to initialize SDL_ttf: " << TTF_GetError() << std::endl;
         throw std::runtime_error("TTF could not be created! SDL_Error: " + std::string(SDL_GetError()));
     }
-    else{
-        FontManager::InitFonts();
-    }
-
 
     // TODO : Handle window resize automatically
     // SDL_RenderSetLogicalSize(renderer, width, height);
@@ -106,17 +104,22 @@ Game::Game(const char *title, const int width, const int height)
 // Destructor
 Game::~Game()
 {
+    
     // Destroy textures
+    // TODO make this line based on game state
     TextureManager::DestroyBaseMapTextures();
 
-    // Destroy fonts
-    FontManager::DestroyFonts();
-    
-    
+    // Destroy fonts, textures... loaded for a specific game state
+    if (currentState)
+    {
+        delete currentState;
+        currentState = nullptr;
+    }
+
     // Destroy variables
+    // TODO Should be moved to a destructod elsewhere.
     delete map;
     delete player;
-
 
     // Destroy renderer
     if (renderer)
@@ -131,7 +134,7 @@ Game::~Game()
         SDL_DestroyWindow(window);
         window = nullptr;
     }
-    
+
     // Quit SDL / SDL subsystems
     TTF_Quit();
     SDL_Quit();
@@ -178,7 +181,7 @@ void Game::update()
 {
     if (currentState)
     {
-        currentState->update(this);
+        currentState->update();
     }
 }
 
@@ -186,7 +189,7 @@ void Game::render()
 {
     if (currentState)
     {
-        currentState->render(this);
+        currentState->render();
     }
 }
 
@@ -198,7 +201,7 @@ void Game::processEvents()
         // std::cout << "event : " << event.type << std::endl;
         if (currentState)
         {
-            currentState->processEvents(this, event);
+            currentState->processEvents(event);
         }
 
         // Handle global events (like window close)

@@ -6,13 +6,17 @@
 
 
 // Forward declaration
-class Game; 
+class TextManager; 
+//class Game;
 
 class GameState
 {
 public:
-    virtual ~GameState() = default;
-    virtual void update(Game *game) = 0;
-    virtual void render(Game *game) = 0;
-    virtual void processEvents(Game *game, SDL_Event &event) = 0;
+    GameState() {};
+    virtual ~GameState() {};
+
+    virtual void update() = 0;
+    virtual void render() = 0;
+    virtual void processEvents(SDL_Event &event) = 0;
+
 };

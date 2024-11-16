@@ -9,9 +9,10 @@
 #include <SDL2/SDL_ttf.h>
 
 // Project Specific headers
-#include "GameState.h"
+//#include "GameState.h"
 
 // Forward declarations
+class GameState;
 class Map;
 class Player;
 class Enemy;
@@ -24,8 +25,7 @@ private:
     bool isRunning;
 
     // Game state
-    GameState *currentState = nullptr;
-    //bool soundEnabled;
+    //static GameState *currentState;
 
     // Know if level is game over
     bool levelGameOver = false;
@@ -39,6 +39,7 @@ private:
 
 public:
     // Static variables
+    static GameState *currentState;
     static SDL_Renderer *renderer;
     static SDL_Event event;
 
@@ -62,7 +63,7 @@ public:
 
     // Game state methods
 
-    void setState(GameState* newState);
+    static void setState(GameState* newState);
     //bool isSoundEnabled() const { return soundEnabled; }
     //void toggleSound() { soundEnabled = !soundEnabled; }
 

@@ -2,11 +2,11 @@
 CC = g++
 
 #OBJS specifies which files to compile as part of the project
-OBJS = ./src/*.cpp ./src/gamestate/*.cpp
+OBJS = ./src/*.cpp ./src/gamestate/*.cpp ./src/fonts/*.cpp
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
-COMPILER_FLAGS = -w -I./include -I./include/utils -std=c++17
+COMPILER_FLAGS = -w -I./include -I./include/utils -I./include/fonts -std=c++17
 
 #LINKER_FLAGS specifies the libraries we're linking against
 LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf

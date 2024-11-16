@@ -2,38 +2,64 @@
 #include <iostream>
 
 // Project Specific headers
-#include "FontManager.h"
 #include "MenuState.h"
 #include "PlayState.h"
 #include "Game.h"
 
-// Must implement all pure virtual functions
-void MenuState::update(Game *game)
+
+// Constructor
+MenuState::MenuState() : GameState()
+{
+
+    menuItems = {
+        "Level 1 : Bolgrot fight from dofus",
+        "Level 2",
+        "level 3",
+        "Settings",
+        "Quit game",
+    };
+
+    // Select first element in the list
+    selectedItem = 0;
+
+    // Set the text manager to a Text Menu object
+    
+}
+
+// Destructor
+MenuState::~MenuState()
+{
+    // Destroy TextManager
+    // DestroyTextManager();
+}
+
+
+// Update menu logic
+void MenuState::update()
 {
     // Update menu logic
     // For example: animate menu items
 }
 
-void MenuState::render(Game *game)
+// Render menu logic
+void MenuState::render()
 {
     // Set a black background
     SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
     SDL_RenderClear(Game::renderer);
 
-    // Render buttons
-
-    // Set text color and font (assuming TTF_Font and SDL_Color are set up)
-    SDL_Color textColor = {255, 255, 255, 255}; // White color
-
-    // Render the title
-    FontManager::RenderText("MY AWESOME GAME", 100, 50, FontManager::roboto, textColor);
-
+    // Draw main title
+    DrawTitle();
+    
+    // Draw menu items
+    DrawMenuItems();
 
     // Render
     SDL_RenderPresent(Game::renderer);
 }
 
-void MenuState::processEvents(Game *game, SDL_Event &event)
+// Process menu events
+void MenuState::processEvents(SDL_Event &event)
 {
     // Handle menu input
     if (event.type == SDL_KEYDOWN)
@@ -47,10 +73,34 @@ void MenuState::processEvents(Game *game, SDL_Event &event)
             std::cout << "key down" << std::endl;
             break;
         case SDLK_RETURN: // Select current item
-            std::cout << "key down" << std::endl;
+            std::cout << "Go to playstate ~" << std::endl;
             // Change to play state
-            game->setState(new PlayState(1));
+            Game::setState(new PlayState(1));
             break;
         }
     }
+}
+
+
+void MenuState::DrawTitle()
+{
+    SDL_Color textColor = {255, 255, 255, 255}; // White color
+
+
+    // Calculate center postion
+    int x = Game::windowWidth / 2;
+
+    // Render the title
+    textManager.DrawTitle(100, 100);
+
+}
+
+void MenuState::DrawMenuItems()
+{
+    textManager.DrawLevel1Text(100, 200);
+    textManager.DrawLevel2Text(100, 250);
+    textManager.DrawLevel3Text(100, 300);
+    
+    textManager.DrawSetting(100, 400);
+    textManager.DrawQuit(100, 450);
 }
