@@ -1,3 +1,10 @@
+#pragma once
+
+// C++ Standard Libraries
+#include <string>
+#include <vector>
+
+// Project Specific headers
 #include "TextManager.h"
 
 class TextMenu : public TextManager
@@ -5,34 +12,35 @@ class TextMenu : public TextManager
 private:
 
     // Fonts
-    TTF_Font *robotoTitle = nullptr;
-    TTF_Font *robotoRegular = nullptr;
+    TTF_Font *mainTitleFont = nullptr;
+    TTF_Font *menuItemFont = nullptr;
 
-    // Menu texts
-    SDL_Texture *mainTitle = nullptr;
-    SDL_Texture *level1Text = nullptr;
-    SDL_Texture *level2Text = nullptr;
-    SDL_Texture *level3Text = nullptr;
-    SDL_Texture *settingsText = nullptr;
-    SDL_Texture *quitGameText = nullptr;
+    // Colors
+    SDL_Color whiteColor = SDL_Color{255, 255, 255, 255};
+    SDL_Color turquoiseColor = SDL_Color{255, 255, 255, 255};
+
+
+    std::vector<std::string> menuItems;
+    
+    SDL_Texture* mainTitleTexture = nullptr;
+    std::vector<SDL_Texture *> itemTextures;
+    std::vector<SDL_Texture *> itemSelectedTextures;
+
 
 public:
     // Constructor / Destructor
-    TextMenu();
+    TextMenu() {};
+    TextMenu(std::string mainTitle, std::vector<std::string> menuItems);
     ~TextMenu();
 
     // Virtual methods
     void LoadFonts() override;
     void DestroyFonts() override;
-    void LoadTexts() override;
+    void LoadTexts() override {}; // empty as I want to use the method below in that case
+    void LoadTexts(std::string mainTitle, std::vector<std::string> menuItems);
     void DestroyTexts() override;
 
     // Draw functions
-    void DrawTitle(int x, int y);
-    void DrawLevel1Text(int x, int y);
-    void DrawLevel2Text(int x, int y);
-    void DrawLevel3Text(int x, int y);
-    void DrawSetting(int x, int y);
-    void DrawQuit(int x, int y);
-
+    void RenderTitle(int x, int y);
+    void RenderItem(int x, int y, int index);
 };

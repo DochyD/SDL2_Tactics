@@ -7,24 +7,26 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-// Project Specific headers
-//#include "Game.h"
-
 class TextManager
 {
 public:
+    // Free use texture
+    // SDL_Texture *texture = nullptr;
+
     // Constructor / Destructor
     TextManager() {}
     ~TextManager() {}
 
     // Display methods
-    void RenderText(SDL_Texture *texture, int x, int y);
-    void LoadTextAsTexture(SDL_Texture* &texture, std::string message, TTF_Font* font, SDL_Color color);
+    void RenderText(SDL_Texture* texture, int x, int y);
+    void RenderText(std::string message, TTF_Font *font, SDL_Color color, int size, int x, int y);
+    void LoadTextAsTexture(SDL_Texture*& texture, std::string message, TTF_Font *font, SDL_Color color);
+    
+    SDL_Texture *CreateTextAsTexture(std::string message, TTF_Font *font, SDL_Color color);
 
     // Basic virtual methods
     virtual void LoadFonts() = 0;
     virtual void DestroyFonts() = 0;
     virtual void LoadTexts() = 0;
     virtual void DestroyTexts() = 0;
-
 };

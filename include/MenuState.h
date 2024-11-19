@@ -1,9 +1,10 @@
 #pragma once
 
-//
+// C++ Standard Libraries
 #include <vector>
 #include <string>
 
+// Project Specific headers
 #include "GameState.h"
 #include "TextManagerMenu.h"
 
@@ -12,10 +13,14 @@ class MenuState : public GameState
 {
 private:
     // Text manager for the Menu
-    TextMenu textManager = TextMenu();
+    TextMenu* textManager;
 
     std::vector<std::string> menuItems;
     int selectedItem;
+
+    // Menu specific method
+    void DrawTitle();
+    void DrawMenuItems();
 
 public:
     // Constructor / Destructor
@@ -26,9 +31,4 @@ public:
     void processEvents(SDL_Event &event) override;
     void update() override;
     void render() override;
-
-    // Menu specific method
-    void DrawTitle();
-    void DrawMenuItems();
-
 };

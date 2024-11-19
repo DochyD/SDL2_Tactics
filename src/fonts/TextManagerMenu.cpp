@@ -1,16 +1,18 @@
-#include <stdexcept>
+// Standard library
 #include <iostream>
+#include <stdexcept>
 
+// Project include
+#include "Game.h"
 #include "TextManagerMenu.h"
 
-
-TextMenu::TextMenu()
+TextMenu::TextMenu(std::string mainTitle, std::vector<std::string> menuItems)
 {
     // Load fonts
     LoadFonts();
 
     // Load texts
-    LoadTexts();
+    LoadTexts(mainTitle, menuItems);
 }
 
 TextMenu::~TextMenu()
@@ -22,94 +24,107 @@ TextMenu::~TextMenu()
     DestroyFonts();
 }
 
-// Load fonts 
+// Load fonts
 void TextMenu::LoadFonts()
 {
 
-    
-    robotoTitle = TTF_OpenFont("assets/fonts/Roboto-Black.ttf", 48);
-    robotoRegular = TTF_OpenFont("assets/fonts/Roboto-Regular.ttf", 32);
+    // TODO make the font size based on the width and height of window...
+    mainTitleFont = TTF_OpenFont("assets/fonts/Roboto-Black.ttf", 48);
+    menuItemFont = TTF_OpenFont("assets/fonts/Roboto-Regular.ttf", 32);
 
-    if (robotoTitle == nullptr)
+    if (mainTitleFont == nullptr)
     {
         throw std::runtime_error("Could not load 'robotoTitle' font: " + std::string(TTF_GetError()));
     }
 
-    if (robotoRegular == nullptr)
+    if (menuItemFont == nullptr)
     {
         throw std::runtime_error("Could not load 'robotoRegular' font: " + std::string(TTF_GetError()));
     }
 
     // Enable font hinting for better quality
-    TTF_SetFontHinting(robotoTitle, TTF_HINTING_LIGHT);
-    TTF_SetFontHinting(robotoRegular, TTF_HINTING_LIGHT);
-    
+    TTF_SetFontHinting(mainTitleFont, TTF_HINTING_LIGHT);
+    TTF_SetFontHinting(menuItemFont, TTF_HINTING_LIGHT);
+
     // Enable kerning for better letter spacing
-    TTF_SetFontKerning(robotoTitle, 1);
-    TTF_SetFontKerning(robotoRegular, 1);
+    TTF_SetFontKerning(mainTitleFont, 1);
+    TTF_SetFontKerning(menuItemFont, 1);
 }
 
 // Destroy fonts
 void TextMenu::DestroyFonts()
 {
-    TTF_CloseFont(robotoTitle);
-    TTF_CloseFont(robotoRegular);
+    TTF_CloseFont(mainTitleFont);
+    TTF_CloseFont(menuItemFont);
 }
 
 // Loads texts
-void TextMenu::LoadTexts()
+void TextMenu::LoadTexts(std::string mTitle, std::vector<std::string> menuItems)
 {
-    SDL_Color color = {255, 255, 255, 255};
-    TextManager::LoadTextAsTexture(mainTitle, "Main Title", robotoTitle, color);
-    TextManager::LoadTextAsTexture(level1Text, "Game 1 : Bolgrot fight from dofus.", robotoRegular, color);
-    TextManager::LoadTextAsTexture(level2Text, "Game 2 : Not available", robotoRegular, color);
-    TextManager::LoadTextAsTexture(level3Text, "Game 3 : Not Available", robotoRegular, color);
-    TextManager::LoadTextAsTexture(settingsText, "Settings (Not Available)", robotoRegular, color);
-    TextManager::LoadTextAsTexture(quitGameText, "Quit", robotoRegular, color);
+    SDL_Color whiteColor = {255, 255, 255, 255};
+    SDL_Color turquoiseColor = {255, 255, 255, 255};
 
+    LoadTextAsTexture(mainTitleTexture, mTitle, mainTitleFont, whiteColor);
+
+    int w, h;
+    if (SDL_QueryTexture(mainTitleTexture, NULL, NULL, &w, &h) != 0)
+    {
+        std::string error = SDL_GetError();
+        mainTitleTexture = nullptr;
+        throw std::runtime_error("Texture invalid immediately after creation: " + error);
+    }
+
+    for (auto text : menuItems)
+    {
+        //itemTextures.push_back(TextManager::CreateTextAsTexture("   " + text, menuItemFont, whiteColor));
+        //itemSelectedTextures.push_back(TextManager::CreateTextAsTexture(" > " + text, menuItemFont, turquoiseColor));
+    }
 }
 
 // Destroy Texts
 void TextMenu::DestroyTexts()
 {
-    SDL_DestroyTexture(mainTitle);
-    SDL_DestroyTexture(level1Text);
-    SDL_DestroyTexture(level2Text);
-    SDL_DestroyTexture(level3Text);
-    SDL_DestroyTexture(settingsText);
-    SDL_DestroyTexture(quitGameText);
+    SDL_DestroyTexture(mainTitleTexture);
+
+    for (size_t i = 0; i < itemTextures.size(); ++i)
+    {
+        if (itemTextures[i])
+        {
+            SDL_DestroyTexture(itemTextures[i]);
+        }
+        if (itemSelectedTextures[i])
+        {
+            SDL_DestroyTexture(itemSelectedTextures[i]);
+        }
+    }
+    itemTextures.clear(); // Clear both vectors
+    itemSelectedTextures.clear();
 }
 
-void TextMenu::DrawTitle(int x, int y)
+void TextMenu::RenderTitle(int x, int y)
 {
-    // std::cout << "Draw title" << std::endl;
-    // std::cout << mainTitle << std::endl;
-    // std::cout << x << std::endl;
-    // std::cout << y << std::endl;
-    RenderText(mainTitle, x, y);
-}
+    if (!mainTitleTexture)
+    {
+        std::cerr << "Main title texture is null!" << std::endl;
+        return;
+    }
 
-void TextMenu::DrawLevel1Text(int x, int y)
-{
-    RenderText(level1Text, x, y);
-}
+    // Get the texture dimensions
+    int width, height;
+    if (SDL_QueryTexture(mainTitleTexture, NULL, NULL, &width, &height) != 0)
+    {
+        std::cout << "width :" << width << std::endl;
+        std::cout << "height :" << height << std::endl;
+        throw std::runtime_error("Failed to query texture's parameters: " + std::string(SDL_GetError()));
+    }
 
-void TextMenu::DrawLevel2Text(int x, int y)
-{
-    RenderText(level2Text, x, y);
-}
+    // Create destination rectangle
+    SDL_Rect destRect = {
+        x - width / 2,  // Center horizontally
+        y - height / 2, // Center vertically
+        width,
+        height};
 
-void TextMenu::DrawLevel3Text(int x, int y)
-{
-    RenderText(level3Text, x, y);
-}
-
-void TextMenu::DrawSetting(int x, int y)
-{
-    RenderText(settingsText, x, y);
-}
-
-void TextMenu::DrawQuit(int x, int y)
-{
-    RenderText(quitGameText, x, y);
+    // Render the texture
+    SDL_RenderCopy(Game::renderer, mainTitleTexture, NULL, &destRect);
 }
