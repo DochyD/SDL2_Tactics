@@ -8,7 +8,6 @@
 #include "PlayState.h"
 #include "Game.h"
 
-
 // Constructor
 MenuState::MenuState() : GameState()
 {
@@ -26,24 +25,21 @@ MenuState::MenuState() : GameState()
     selectedItem = 0;
 
     // Set the text manager to a Text Menu object
-    std::cout << "Calling constructor now" << std::endl;
     textManager = new TextMenu(maintTitle, menuItems);
-    std::cout << "End of constructor call" << std::endl;
 }
 
 // Destructor
 MenuState::~MenuState()
 {
     delete textManager;
-    textManager = nullptr;    
+    textManager = nullptr;
 }
-
 
 // Update menu logic
 void MenuState::update()
 {
-    // Update menu logic
-    // For example: animate menu items
+    // Empty for now
+    // Usefull if we have animation to handle in our menu
 }
 
 // Render menu logic
@@ -55,7 +51,7 @@ void MenuState::render()
 
     // Draw main title
     DrawTitle();
-    
+
     // Draw menu items
     DrawMenuItems();
 
@@ -72,58 +68,62 @@ void MenuState::processEvents(SDL_Event &event)
         switch (event.key.keysym.sym)
         {
         case SDLK_UP: // Move selection up
-            std::cout << "key up" << std::endl;
+            selectedItem = (selectedItem - 1 + menuItems.size()) % menuItems.size();
             break;
         case SDLK_DOWN: // Move selection down
-            std::cout << "key down" << std::endl;
+            selectedItem = (selectedItem + 1) % menuItems.size();
             break;
         case SDLK_RETURN: // Select current item
-            std::cout << "Go to playstate ~" << std::endl;
-            // Change to play state
-            Game::setState(new PlayState(1));
+
+            switch (selectedItem)
+            {
+            case 0: // Go to playstate 1
+                Game::setState(new PlayState(1));
+                break;
+            case 1: // Go to playstate 2
+                // Game::setState(new PlayState(2));
+                std::clog << "Level 2 not implemented yet." << std::endl;
+                break;
+            case 2: // Go to playstate 3
+                // Game::setState(new PlayState(3));
+                std::clog << "Level 3 not implemented yet." << std::endl;
+                break;
+            case 3: // Access settings
+                std::clog << "Settings not implemented yet." << std::endl;
+                break;
+            case 4: // Quit the game
+                std::clog << "Quitting game from menu." << std::endl;
+                SDL_Event quit_event;
+                quit_event.type = SDL_QUIT;
+                SDL_PushEvent(&quit_event);
+                break;
+            }
             break;
         }
     }
 }
 
-
 void MenuState::DrawTitle()
 {
-    SDL_Color textColor = {255, 255, 255, 255}; // White color
-
-
     // Calculate center postion
     int x = Game::windowWidth / 2;
     int y = Game::windowHeight / 8;
 
-    // TODO : Make the title at a pos based in window height/width
-
     // Render the title
     textManager->RenderTitle(x, y);
-
 }
 
 void MenuState::DrawMenuItems()
 {
-    // // Get menuItems textures
-    // const std::vector<SDL_Texture *>& itemTex = textManager.GetItemTextures();
-    // const std::vector<SDL_Texture *>& itemSelectedTex = textManager.GetItemTexturesSelected();
+    int x = Game::windowWidth / 10;
+    int startY = Game::windowHeight / 4;
+    int spacing = 50; // TODO: Make this based in screen height
 
+    bool selected = false;
 
-
-    // // TODO : Make menu items at a pos based in window height/width
-    // int startY = Game::windowHeight / 4;
-    // int spacing = 50;
-
-
-    // for (size_t i = 0; i < menuItems.size(); i++) {
-    //     std::string displayText = (i == selectedItem ? "> " : "  ") + menuItems[i];
-        
-    //     // Assuming your TextManager has a generic draw text method
-    //     SDL_Color color = (i == selectedItem) ? 
-    //         SDL_Color{255, 255, 0, 255} :  // Yellow for selected
-    //         SDL_Color{255, 255, 255, 255}; // White for unselected
-            
-    //     //textManager.DrawText(Game::windowWidth / 4, startY + i * spacing, displayText.c_str(), color);
-    // }
+    for (size_t i = 0; i < menuItems.size(); i++)
+    {
+        (i == selectedItem) ? selected = true : selected = false;
+        textManager->RenderItem(x, startY + i * spacing, i, selected);
+    }
 }

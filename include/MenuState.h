@@ -8,12 +8,11 @@
 #include "GameState.h"
 #include "TextManagerMenu.h"
 
-
 class MenuState : public GameState
 {
 private:
     // Text manager for the Menu
-    TextMenu* textManager;
+    TextMenu *textManager;
 
     std::vector<std::string> menuItems;
     int selectedItem;

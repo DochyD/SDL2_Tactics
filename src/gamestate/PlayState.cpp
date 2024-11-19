@@ -20,7 +20,6 @@ PlayState::PlayState(int level)
 
 PlayState::~PlayState()
 {
-    
 }
 
 void PlayState::update()
@@ -35,14 +34,16 @@ void PlayState::render()
     SDL_SetRenderDrawColor(Game::renderer, 255, 0, 0, 255);
     SDL_RenderClear(Game::renderer);
 
-
     // Render
     SDL_RenderPresent(Game::renderer);
 }
 
-void PlayState::processEvents(SDL_Event& event) {
-    if (event.type == SDL_KEYDOWN) {
-        if (event.key.keysym.sym == SDLK_ESCAPE) {
+void PlayState::processEvents(SDL_Event &event)
+{
+    if (event.type == SDL_KEYDOWN)
+    {
+        if (event.key.keysym.sym == SDLK_ESCAPE)
+        {
             Game::setState(new MenuState());
         }
         // ... your existing game controls ...

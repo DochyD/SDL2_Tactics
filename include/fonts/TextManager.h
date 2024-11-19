@@ -10,18 +10,16 @@
 class TextManager
 {
 public:
-    // Free use texture
-    // SDL_Texture *texture = nullptr;
-
     // Constructor / Destructor
     TextManager() {}
     ~TextManager() {}
 
     // Display methods
-    void RenderText(SDL_Texture* texture, int x, int y);
+    void RenderText(SDL_Texture *texture, int x, int y);
     void RenderText(std::string message, TTF_Font *font, SDL_Color color, int size, int x, int y);
-    void LoadTextAsTexture(SDL_Texture*& texture, std::string message, TTF_Font *font, SDL_Color color);
-    
+
+    void LoadTextAsTexture(SDL_Texture *&texture, std::string message, TTF_Font *font, SDL_Color color);
+
     SDL_Texture *CreateTextAsTexture(std::string message, TTF_Font *font, SDL_Color color);
 
     // Basic virtual methods

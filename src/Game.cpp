@@ -109,7 +109,7 @@ Game::~Game()
     // TODO make this line based on game state
     TextureManager::DestroyBaseMapTextures();
 
-    // Destroy fonts, textures... loaded for a specific game state
+    // Destroy current state.
     if (currentState)
     {
         delete currentState;

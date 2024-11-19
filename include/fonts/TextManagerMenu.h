@@ -10,7 +10,6 @@
 class TextMenu : public TextManager
 {
 private:
-
     // Fonts
     TTF_Font *mainTitleFont = nullptr;
     TTF_Font *menuItemFont = nullptr;
@@ -19,13 +18,11 @@ private:
     SDL_Color whiteColor = SDL_Color{255, 255, 255, 255};
     SDL_Color turquoiseColor = SDL_Color{255, 255, 255, 255};
 
-
     std::vector<std::string> menuItems;
-    
-    SDL_Texture* mainTitleTexture = nullptr;
+
+    SDL_Texture *mainTitleTexture = nullptr;
     std::vector<SDL_Texture *> itemTextures;
     std::vector<SDL_Texture *> itemSelectedTextures;
-
 
 public:
     // Constructor / Destructor
@@ -42,5 +39,5 @@ public:
 
     // Draw functions
     void RenderTitle(int x, int y);
-    void RenderItem(int x, int y, int index);
+    void RenderItem(int x, int y, int index, bool selected);
 };

@@ -6,7 +6,7 @@
 #include "Game.h"
 
 // Render Text
-void TextManager::RenderText(SDL_Texture* texture, int x, int y)
+void TextManager::RenderText(SDL_Texture *texture, int x, int y)
 {
     if (!texture)
     {
@@ -16,7 +16,6 @@ void TextManager::RenderText(SDL_Texture* texture, int x, int y)
 
     int width;
     int height;
-    std::cout << texture << std::endl;
     if (SDL_QueryTexture(texture, NULL, NULL, &width, &height) != 0)
     {
         throw std::runtime_error("Failed to query texture's parameters: " + std::string(SDL_GetError()));
@@ -49,7 +48,6 @@ void TextManager::LoadTextAsTexture(SDL_Texture *&texture, std::string message, 
         throw std::runtime_error("Failed to create surface: " + std::string(TTF_GetError()));
     }
 
-    
     // Delete old texture if it exists
     if (texture)
     {
@@ -58,12 +56,11 @@ void TextManager::LoadTextAsTexture(SDL_Texture *&texture, std::string message, 
     }
 
     texture = SDL_CreateTextureFromSurface(Game::renderer, surface);
-    
+
     if (!texture)
     {
         SDL_FreeSurface(surface);
         throw std::runtime_error("Failed to create texture: " + std::string(SDL_GetError()));
-        return;
     }
 
     int w, h;
@@ -76,11 +73,10 @@ void TextManager::LoadTextAsTexture(SDL_Texture *&texture, std::string message, 
     }
 
     SDL_FreeSurface(surface);
-
 }
 
 // Create a texture based on text
-SDL_Texture *CreateTextAsTexture(std::string message, TTF_Font *font, SDL_Color color)
+SDL_Texture *TextManager::CreateTextAsTexture(std::string message, TTF_Font *font, SDL_Color color)
 {
     SDL_Surface *surface = TTF_RenderText_Blended(font, message.c_str(), color);
     if (!surface)
