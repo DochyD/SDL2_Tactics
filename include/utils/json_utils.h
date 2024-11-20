@@ -1,4 +1,5 @@
 #pragma once
+
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -141,6 +142,8 @@ namespace JsonUtils
         }
         catch (const std::exception &e)
         {
+            std::cerr << "An exception occurred while loading map: " << e.what() << std::endl;
+            std::cerr << "Please check the input or configuration and try again." << std::endl;
             return false;
         }
     }

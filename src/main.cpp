@@ -13,13 +13,16 @@
 
 // Project Specific headers
 #include "Game.h"
+
+// Play states
 #include "MenuState.h"
+#include "PlayStateOne.h"
 
 int main()
 {
 	// Init game
 	Game game = Game(WINDOW_NAME, BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT);
-	game.setState(new MenuState());
+	game.setState(new PlayStateOne());
 
 	// Set game state to MAIN_MENU
 
@@ -30,7 +33,6 @@ int main()
 	// Game loop
 	while (game.running())
 	{
-
 		// Get tick mesure process duration latter
 		frameStart = SDL_GetTicks();
 

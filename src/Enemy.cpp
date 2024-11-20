@@ -55,24 +55,22 @@ void Enemy::update()
 
 void Enemy::update(int playerX, int playerY)
 {
+    // If enenmy is next to the player who just killed an enemy, do nothing
     if (nextToKilledEnemy)
     {
         setNextToKilledEnemy(false);
     }
     else
     {
+        // Find enemy next position
         int x = getPosX();
         int y = getPosY();
 
         int diffX = abs(playerX - x);
         int diffY = abs(playerY - y);
 
-        int dirX = (playerX > x) ? 1 : (playerX < x) ? -1
-                                                     : 0;
-        int dirY = (playerY > y) ? 1 : (playerY < y) ? -1
-                                                     : 0;
-
-        // Different rules if the enemy is next to the player  (cell around + diagonal)
+        int dirX = (playerX > x) ? 1 : (playerX < x) ? -1 : 0;
+        int dirY = (playerY > y) ? 1 : (playerY < y) ? -1 : 0;
 
         if (diffX == diffY)
         {
@@ -90,9 +88,9 @@ void Enemy::update(int playerX, int playerY)
         // TODO : Check colision between enemies...
 
         // Check if new position is equal to player postion -> game over
-        if (getPosX() == playerX && getPosY() == playerY)
-        {
-            std::cout << "Game over enemy kill" << std::endl;
-        }
+        // if (getPosX() == playerX && getPosY() == playerY)
+        // {
+        //     std::cout << "Game over enemy kill" << std::endl;
+        // }
     }
 }

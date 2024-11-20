@@ -64,12 +64,8 @@ public:
     // Game state methods
 
     static void setState(GameState* newState);
-    //bool isSoundEnabled() const { return soundEnabled; }
-    //void toggleSound() { soundEnabled = !soundEnabled; }
 
     // Handle enemies on map
     void updateEnemies(std::vector<Enemy *> &enemies);
-
-
 
 };

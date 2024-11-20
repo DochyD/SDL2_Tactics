@@ -5,7 +5,7 @@
 
 // Project Specific headers
 #include "MenuState.h"
-#include "PlayState.h"
+#include "PlayStateOne.h"
 #include "Game.h"
 
 // Constructor
@@ -78,7 +78,7 @@ void MenuState::processEvents(SDL_Event &event)
             switch (selectedItem)
             {
             case 0: // Go to playstate 1
-                Game::setState(new PlayState(1));
+                Game::setState(new PlayStateOne());
                 break;
             case 1: // Go to playstate 2
                 // Game::setState(new PlayState(2));
