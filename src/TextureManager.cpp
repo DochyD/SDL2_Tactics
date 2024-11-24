@@ -9,6 +9,7 @@ namespace TextureManager
     SDL_Texture *playerTexture = nullptr;
     SDL_Texture *enemyTexture = nullptr;
     SDL_Texture *spellRangeTile = nullptr;
+    SDL_Texture *cellSpawn = nullptr;
 
     // Method to load a texture from a path
     SDL_Texture *LoadTexture(const char *fileName)
@@ -54,6 +55,7 @@ namespace TextureManager
         playerTexture = LoadTexture("assets/sprites/player.png");
         enemyTexture = LoadTexture("assets/sprites/enemy.png");
         spellRangeTile = LoadTexture("assets/sprites/spellSelectionCell.png");
+        cellSpawn = LoadTexture("assets/sprites/enemySpawnCell.png");
     }
 
     // Destroy texture for the base map

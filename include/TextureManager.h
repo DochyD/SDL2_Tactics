@@ -11,6 +11,7 @@ namespace TextureManager
     extern SDL_Texture *playerTexture;
     extern SDL_Texture *enemyTexture;
     extern SDL_Texture *spellRangeTile;
+    extern SDL_Texture *cellSpawn;
 
     // Base map texture managment
     void LoadBaseMapTextures();
@@ -20,5 +21,4 @@ namespace TextureManager
     SDL_Texture *LoadTexture(const char *fileName);
     void DrawTexture(SDL_Texture *texture, SDL_Rect src, SDL_Rect dest);
     void DestroyTexture(SDL_Texture *texture);
-
 };

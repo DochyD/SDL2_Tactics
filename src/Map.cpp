@@ -14,12 +14,14 @@ Map::Map()
 {
     cellLight = TextureManager::LoadTexture("assets/sprites/lightCell.png");
     cellDark = TextureManager::LoadTexture("assets/sprites/darkCell.png");
+    cellSpawn = TextureManager::LoadTexture("assets/sprites/enemySpawnCell.png");
     // cellObstacle = TextureManager::LoadTexture("assets/sprites/player.png");
 }
 Map::~Map()
 {
     TextureManager::DestroyTexture(cellLight);
     TextureManager::DestroyTexture(cellDark);
+    TextureManager::DestroyTexture(cellSpawn);
     // TextureManager::DestroyTexture(cellObstacle);
 }
 

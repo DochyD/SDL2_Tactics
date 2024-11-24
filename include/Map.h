@@ -22,6 +22,7 @@ private:
     std::pair<int, int> cellTextureDimension{45, 90};
     SDL_Texture *cellLight = nullptr;
     SDL_Texture *cellDark = nullptr;
+    SDL_Texture *cellSpawn = nullptr;
 
     // Player base info
     int playerBaseHealth;
@@ -29,8 +30,8 @@ private:
     int playerStartingPosY;
 
     // Entities on board
-    Player* player = nullptr;
-    std::vector<Enemy*> enemies;
+    // Player* player = nullptr;
+    // std::vector<Enemy*> enemies;
     
 public:
     // Constructor/Destructor
@@ -43,6 +44,7 @@ public:
     int getNumberCellWidth() const { return numberCellWidth; }
     int getNumberCellHeight() const { return numberCellHeight; }
     std::pair<int, int> getScreenPos(int x, int y) const { return std::make_pair(grid[x][y].x, grid[x][y].y); }
+    std::pair<int, int> getCellTextureDimension() const { return cellTextureDimension; }
 
     int getPlayerStartingPosX() const { return playerStartingPosX; }
     int getPlayerStartingPosY() const { return playerStartingPosY; }

@@ -282,7 +282,7 @@ void Player::castSpellThree(int x, int y)
     //std::clog << "Casting spell three" << std::endl;
 
     // Remove one hp
-    removeHealtPoint(3);
+    removeHealtPoint(5);
 
     // Calculate postion of each elements.
 
