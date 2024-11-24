@@ -34,4 +34,5 @@ public:
 
     // Draw functions
     void RenderTurn(int x, int y, int t);
+    void RenderHealthPoint(int x, int y, int hp);
 };

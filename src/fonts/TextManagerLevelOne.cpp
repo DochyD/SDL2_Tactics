@@ -91,3 +91,41 @@ void TextLevelOne::RenderTurn(int x, int y, int t)
     // Free the surface as it's no longer needed
     SDL_FreeSurface(textSurface);
 }
+
+
+void TextLevelOne::RenderHealthPoint(int x, int y, int hp)
+{
+    // Create text string
+    std::string turnText = "Player's hp: " + std::to_string(hp);
+
+    // Render text surface
+    SDL_Surface *textSurface = TTF_RenderText_Solid(textFont, turnText.c_str(), whiteColor);
+    if (textSurface == nullptr)
+    {
+        SDL_Log("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
+        return;
+    }
+
+    // Create texture from surface
+    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(Game::renderer, textSurface);
+    if (textTexture == nullptr)
+    {
+        SDL_Log("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
+        SDL_FreeSurface(textSurface);
+        return;
+    }
+
+    // Set rendering dimensions
+    textRect.x = x;
+    textRect.y = y;
+    textRect.w = textSurface->w;
+    textRect.h = textSurface->h;
+
+
+
+    // Render the text texture
+    SDL_RenderCopy(Game::renderer, textTexture, nullptr, &textRect);
+
+    // Free the surface as it's no longer needed
+    SDL_FreeSurface(textSurface);
+}

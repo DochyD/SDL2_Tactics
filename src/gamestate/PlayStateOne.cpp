@@ -15,7 +15,7 @@ PlayStateOne::PlayStateOne()
     turn = 1;
     timer = 0;
     gameOver = false;
-    
+
     // Setup text manager
     textManager = new TextLevelOne();
 
@@ -37,12 +37,12 @@ PlayStateOne::PlayStateOne()
     // enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 16, 25));
     // enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 20, 16));
 
-    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 15, 16));
-    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 15, 17));
-    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 14, 18));
-    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 13, 19));
-    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 12, 20));
-    enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 11, 21));
+    // enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 15, 16));
+    // enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 15, 17));
+    // enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 14, 18));
+    // enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 13, 19));
+    // enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 12, 20));
+    // enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 11, 21));
 
     // enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 15, 16));
     // enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, 15, 14));
@@ -75,6 +75,28 @@ void PlayStateOne::update()
 {
 
     // Start new turn
+    if (newTurn)
+    {
+        // Go to next turn
+        turn++;
+
+        // Spawn enemies
+        if (!nextWaveOfEnemies.empty())
+        {
+            std::cout << "Spawning enemies" << std::endl;
+            SpawnNextBatchOfEnemies();
+
+            nextWaveOfEnemies.clear();
+        }
+
+        // Generate next batch if needed
+        if (turn < numberOfEnemyWave + 1)
+        {
+            GenerateNextEnemySpawn();
+        }
+
+        newTurn = false;
+    }
 
     // Update player and enemies
     UpdatePlayerAndEnemies();
@@ -82,6 +104,8 @@ void PlayStateOne::update()
     // Check if enemy pos is same as player
     // Check if two enemies have same position (They collided)
     CheckIfGameOverFromEnemies();
+
+    CheckPlayerOutOfHp();
 
     // Check if all enemies are dead
     CheckIfVictory();
@@ -103,6 +127,8 @@ void PlayStateOne::render()
 
     // Display info
     RenderTurn();
+    RenderHealthPoint();
+
 
     // Render map
     // map->createBaseMap(windowHeight, windowWidth); // don't forget to comment out the map loading
@@ -133,7 +159,7 @@ void PlayStateOne::processEvents(SDL_Event &event)
         else if (event.key.keysym.sym == SDLK_F1 || event.key.keysym.sym == SDLK_SPACE)
         {
             // Start a new turn
-            turn++;
+            newTurn = true;
             std::cout << "New turn : " << turn << std::endl;
         }
         else
@@ -258,11 +284,20 @@ void PlayStateOne::CheckIfGameOverFromEnemies()
 
 void PlayStateOne::CheckIfVictory()
 {
-    if (enemies.empty()) // And last round once implemented
+    if (enemies.empty() && turn + 1 >numberOfEnemyWave)
     {
         // Trigger end of game
         std::clog << "All enemies are dead. Victory" << std::endl;
         victory = true;
+    }
+}
+
+void PlayStateOne::CheckPlayerOutOfHp()
+{
+    if(player->getHealthPoint() <= 0)
+    {
+        std::clog << "Player ran out of healt points. Game over" << std::endl;
+        gameOver = true;
     }
 }
 
@@ -286,7 +321,7 @@ void PlayStateOne::GenerateNextEnemySpawn()
             x = distrib(gen);
             y = distrib(gen);
         }
-        nextWaveOfEnemies[i] = std::make_pair(x, y);
+        nextWaveOfEnemies.push_back(std::make_pair(x, y));
         i++;
     }
 }
@@ -315,7 +350,22 @@ void PlayStateOne::DrawEnemySpawn()
     }
 }
 
+void PlayStateOne::SpawnNextBatchOfEnemies()
+{
+    for(auto e: nextWaveOfEnemies)
+    {
+        enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, e.first, e.second));
+    }
+}
+
 void PlayStateOne::RenderTurn()
 {
+    // TODO : Do not hard code value
     textManager->RenderTurn(10, 10, turn);
+}
+
+void PlayStateOne::RenderHealthPoint()
+{
+    // TODO : Do not hard code value
+    textManager->RenderHealthPoint(10, 50, player->getHealthPoint());
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 // C++ Standard Libraries
-#include <array>
 #include <vector>
 
 // Third Party Libraries
@@ -22,8 +21,9 @@ private:
     float timer;
     bool gameOver = false;
     bool victory = false;
+    bool newTurn = false;
 
-    const int numberOfWave = 5;
+    const int numberOfEnemyWave = 5;
     static constexpr int enemiesPerWave = 5;
 
     // Handle text rendering
@@ -39,7 +39,7 @@ private:
     std::vector<Enemy *> enemies;
 
     // Next enemies to spawn
-    std::array<std::pair<int, int>, enemiesPerWave> nextWaveOfEnemies;
+    std::vector<std::pair<int, int>> nextWaveOfEnemies;
 
 public:
     PlayStateOne();
@@ -54,6 +54,7 @@ public:
     // Turn base method
     void GenerateNextEnemySpawn();
     void DrawEnemySpawn();
+    void SpawnNextBatchOfEnemies();
 
     // Update entites
     void UpdatePlayerAndEnemies();
@@ -62,8 +63,10 @@ public:
     // Check state of game 
     void CheckIfGameOverFromEnemies();
     void CheckIfVictory();
+    void CheckPlayerOutOfHp();
 
     // Display info
     void RenderTurn();
+    void RenderHealthPoint();
 
 };
