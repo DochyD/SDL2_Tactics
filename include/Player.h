@@ -10,6 +10,9 @@
 class Player : public Character
 {
 private:
+    //
+    int actionPointsPerTurn = 10;
+    int currentActionPoints = actionPointsPerTurn;
 
     // Queue to hold events
     std::queue<SDL_Event> eventQueue;
@@ -31,6 +34,10 @@ public:
     void draw();
     void update();
 
+    // Getters
+    int getActionPointsPerTurn() { return actionPointsPerTurn; }
+    int getCurrentActionPoints() { return currentActionPoints; }
+
     // Events related methods
     void processEventQueue();
     void addEventToQueue(SDL_Event e) { eventQueue.push(e); };
@@ -48,4 +55,8 @@ public:
     void castSpellThree(int x, int y);
 
     void cleanSpells();
+
+    //
+    void removeActionPoints(int v) { currentActionPoints -= v; }
+    void replenishActionPoints() { currentActionPoints = actionPointsPerTurn; }
 };

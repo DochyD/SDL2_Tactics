@@ -3,8 +3,6 @@
 // C++ Standard Libraries
 #include <vector>
 
-// Third Party Libraries
-
 // Project Specific headers
 #include "Enemy.h"
 #include "Map.h"
@@ -68,5 +66,6 @@ public:
     // Display info
     void RenderTurn();
     void RenderHealthPoint();
+    void RenderActionPoints();
 
 };

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
@@ -28,6 +30,7 @@ public:
 
     // Getters
     int getHealthPoint() { return healtPoint; }
+    std::pair<int, int> getPos() { return std::make_pair(xPos, yPos); }
     int getPosX() { return xPos; }
     int getPosY() { return yPos; }
     int getScreenX() { return xScreen; }

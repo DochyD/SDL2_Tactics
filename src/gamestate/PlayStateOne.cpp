@@ -29,6 +29,7 @@ PlayStateOne::PlayStateOne()
     // Load player
     player = new Player(*map, TextureManager::playerTexture);
 
+
     // Load next batch of enemies
     GenerateNextEnemySpawn();
 
@@ -95,6 +96,9 @@ void PlayStateOne::update()
             GenerateNextEnemySpawn();
         }
 
+        // Replenish player's ap
+        player->replenishActionPoints();
+
         newTurn = false;
     }
 
@@ -128,6 +132,7 @@ void PlayStateOne::render()
     // Display info
     RenderTurn();
     RenderHealthPoint();
+    RenderActionPoints();
 
 
     // Render map
@@ -352,9 +357,24 @@ void PlayStateOne::DrawEnemySpawn()
 
 void PlayStateOne::SpawnNextBatchOfEnemies()
 {
-    for(auto e: nextWaveOfEnemies)
+    // If there is already the player or an enemy on the cell, don't spawn it
+
+    // Store current enetity pos
+    std::set<std::pair<int, int>> currentEntityPos;
+    currentEntityPos.insert(player->getPos());
+
+    for(auto e: enemies)
     {
-        enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, e.first, e.second));
+        currentEntityPos.insert(e->getPos());
+    }
+
+    // Spawn enemy there is no entity on the cell
+    for(auto pos: nextWaveOfEnemies)
+    {
+        if (!currentEntityPos.count(pos))
+        {
+            enemies.push_back(new Enemy(*map, TextureManager::enemyTexture, pos.first, pos.second));
+        }
     }
 }
 
@@ -369,3 +389,10 @@ void PlayStateOne::RenderHealthPoint()
     // TODO : Do not hard code value
     textManager->RenderHealthPoint(10, 50, player->getHealthPoint());
 }
+
+void PlayStateOne::RenderActionPoints()
+{
+    // TODO : Do not hard code value
+    textManager->RenderActionPoint(150, 10, player->getCurrentActionPoints());
+}
+

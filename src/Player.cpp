@@ -12,7 +12,6 @@ Player::Player(const Map &map, SDL_Texture *cTexture) : Character(map, cTexture)
 
     // Set starting position
     setPos(map.getPlayerStartingPosX(), map.getPlayerStartingPosY());
-
 }
 
 Player::~Player()
@@ -87,7 +86,7 @@ void Player::processEventQueue()
                 // std::cout << "Invalid key pressed." << std::endl;
                 break;
             }
-            //break;
+            // break;
         // Process mouse click
         case SDL_MOUSEBUTTONDOWN:
             switch (event.button.button)
@@ -162,7 +161,7 @@ void Player::addClickableElements(std::vector<std::pair<int, int>> elems)
 
 void Player::previewSpellOne()
 {
-    //std::cout << "Preview spell 1" << std::endl;
+    // std::cout << "Preview spell 1" << std::endl;
 
     // Clear any previous spell selection
     cleanSpells();
@@ -191,7 +190,7 @@ void Player::previewSpellOne()
 void Player::previewSpellTwo()
 {
 
-    //std::cout << "Preview spell 2" << std::endl;
+    // std::cout << "Preview spell 2" << std::endl;
 
     // Clear any previous spell selection
     cleanSpells();
@@ -225,7 +224,7 @@ void Player::previewSpellTwo()
 void Player::previewSpellThree()
 {
 
-    //std::cout << "Preview spell 3" << std::endl;
+    // std::cout << "Preview spell 3" << std::endl;
 
     // Clear any previous spell selection
     cleanSpells();
@@ -253,36 +252,43 @@ void Player::previewSpellThree()
 
 void Player::castSpellOne(int x, int y)
 {
-    //std::clog << "Casting spell one" << std::endl;
+    // std::clog << "Casting spell one" << std::endl;
+    int apCost = 1;
 
-    // Remove one hp
-    removeHealtPoint(1);
-
-    // Calculate postion of each elements.
-
-    // For now just update the player position
-    setPos(x, y);
+    if (getCurrentActionPoints() >= apCost)
+    {
+        // Remove one hp
+        removeHealtPoint(1);
+        removeActionPoints(apCost);
+        
+        // Update player position
+        setPos(x, y);
+    }
 }
 
 void Player::castSpellTwo(int x, int y)
 {
-    //std::clog << "Casting spell two" << std::endl;
+    // std::clog << "Casting spell two" << std::endl;
+    int apCost = 2;
 
-    // Remove one hp
-    removeHealtPoint(2);
-
-    // Calculate postion of each elements.
-
-    // For now just update the player position
-    setPos(x, y);
+    if (getCurrentActionPoints() >= apCost)
+    {
+        // Remove one hp
+        removeHealtPoint(2);
+        removeActionPoints(apCost);
+        
+        // Update player position
+        setPos(x, y);
+    }
 }
 
 void Player::castSpellThree(int x, int y)
 {
-    //std::clog << "Casting spell three" << std::endl;
+    // std::clog << "Casting spell three" << std::endl;
 
     // Remove one hp
     removeHealtPoint(5);
+    removeActionPoints(1);
 
     // Calculate postion of each elements.
 

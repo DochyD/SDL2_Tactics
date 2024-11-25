@@ -33,6 +33,8 @@ public:
     void DestroyTexts() override;
 
     // Draw functions
+    // TODO : most of the code is the same for those functions...
     void RenderTurn(int x, int y, int t);
     void RenderHealthPoint(int x, int y, int hp);
+    void RenderActionPoint(int x, int y, int ap);
 };
